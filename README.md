@@ -11,6 +11,8 @@
 
 ## Sparrow - A Telecommunication System
 
+<img src="/Add a heading.png">
+
 Sparrow is a comprehensive telecommunications system designed to handle modern voice and video communication, mobile money transactions, and SMS services. Built with Java and Spring Boot, Sparrow provides a robust backend to manage the complexities of real-time communication, including WebRTC signaling for peer-to-peer connections.
 
 ## Features:
