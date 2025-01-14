@@ -13,7 +13,9 @@
 
 <img src="/Add a heading.png">
 
-Sparrow is a comprehensive telecommunications system designed to handle modern voice and video communication, mobile money transactions, and SMS services. Built with Java and Spring Boot, Sparrow provides a robust backend to manage the complexities of real-time communication, including WebRTC signaling for peer-to-peer connections.
+Sparrow is a comprehensive telecommunications system designed to handle modern voice and video communication, mobile money transactions, and SMS services. Built with Java and Spring Boot, Sparrow provides a robust backend to manage the complexities of real-time communication, including WebRTC signaling for peer-to-peer connections. Sparrow can be integrated into your WebApps to understand how Payment systems work, video calls, VOIP, SMS and Calls. 
+    Sparrow is designed using Java and it's part of the Projects am currently undertaking.
+Feel free to test the software & provide some feedback.
 
 ## Features:
 
