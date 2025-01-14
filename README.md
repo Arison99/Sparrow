@@ -1,4 +1,4 @@
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Arison99/Sparrow/build.yml?branch=main)](https://github.com/Arison99/Sparrow/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/Arison99/Sparrow/.github/workflows/maven.yml?branch=main)](https://github.com/Arison99/Sparrow/actions)
 [![Version](https://img.shields.io/github/v/release/Arison99/Sparrow)](https://github.com/Arison99/Sparrow/releases)
 [![Stars](https://img.shields.io/github/stars/Arison99/Sparrow)](https://github.com/Arison99/Sparrow/stargazers)
 [![Forks](https://img.shields.io/github/forks/Arison99/Sparrow)](https://github.com/Arison99/Sparrow/network/members)
