@@ -1,6 +1,6 @@
-package com.example.telcosystem.controller;
+package com.sparrow.telcosystem.controller;
 
-import com.example.telcosystem.service.CallService;
+import com.sparrow.telcosystem.service.CallService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

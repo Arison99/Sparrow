@@ -1,4 +1,4 @@
-package com.example.telcosystem.config;
+package com.sparrow.telcosystem.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

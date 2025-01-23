@@ -1,6 +1,6 @@
 <project>
     <parent>
-        <groupId>com.example.telcosystem</groupId>
+        <groupId>com.sparrow.telcosystem</groupId>
         <artifactId>TelcoSystem</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>

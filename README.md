@@ -73,7 +73,7 @@ This project is ideal for anyone interested in building a scalable and modular t
 - **Send SMS**: `POST /api/sms/send`
 - **Mobile Money Transfer**: `POST /api/mobile-money/transfer`
 
-### Example Requests
+### sparrow Requests
 
 #### Start Call
 ```sh

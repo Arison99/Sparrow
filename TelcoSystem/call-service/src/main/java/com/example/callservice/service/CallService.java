@@ -1,7 +1,7 @@
-package com.example.callservice.service;
+package com.sparrow.callservice.service;
 
-import com.example.callservice.model.Call;
-import com.example.callservice.repository.CallRepository;
+import com.sparrow.callservice.model.Call;
+import com.sparrow.callservice.repository.CallRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

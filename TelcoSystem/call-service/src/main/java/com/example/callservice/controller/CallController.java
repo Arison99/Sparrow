@@ -1,7 +1,7 @@
-package com.example.callservice.controller;
+package com.sparrow.callservice.controller;
 
-import com.example.callservice.model.Call;
-import com.example.callservice.service.CallService;
+import com.sparrow.callservice.model.Call;
+import com.sparrow.callservice.service.CallService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

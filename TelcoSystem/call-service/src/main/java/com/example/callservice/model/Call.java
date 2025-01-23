@@ -1,4 +1,4 @@
-package com.example.callservice.model;
+package com.sparrow.callservice.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

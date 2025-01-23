@@ -1,4 +1,4 @@
-package com.example.MobileMoney;
+package com.sparrow.MobileMoney;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

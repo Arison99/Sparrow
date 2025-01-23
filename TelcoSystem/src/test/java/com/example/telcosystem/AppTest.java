@@ -1,4 +1,4 @@
-package com.example.telcosystem;
+package com.sparrow.telcosystem;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

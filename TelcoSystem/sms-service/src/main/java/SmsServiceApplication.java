@@ -1,4 +1,4 @@
-package com.example.SmsService;
+package com.sparrow.SmsService;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
