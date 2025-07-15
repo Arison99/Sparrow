@@ -1,8 +1,0 @@
-{
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "java.project.sourcePaths": [
-        "."
-    ],
-    "java.project.referencedLibraries": [],
-    "java.compile.nullAnalysis.mode": "automatic"
-}
