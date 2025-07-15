@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>API Documentation - MoMo Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/components/prism-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-6xl mx-auto mt-10 p-6">
+    <!-- Navigation -->
+    <nav class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">API Documentation</h1>
+            <div class="space-x-4">
+                <a href="/admin" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                <a href="/admin/users" class="text-blue-600 hover:text-blue-800">Users</a>
+                <a href="/admin/services" class="text-blue-600 hover:text-blue-800">Services</a>
+                <a href="/admin/transactions" class="text-blue-600 hover:text-blue-800">Transactions</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Introduction -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Sparrow MoMo API Documentation</h2>
+        <p class="text-gray-600 mb-4">
+            Welcome to the Sparrow Mobile Money API documentation. This API provides comprehensive endpoints for testing and learning how mobile money services work. 
+            You can use these endpoints to simulate real-world mobile money operations including user management, transactions, and various financial services.
+        </p>
+        <div class="bg-blue-50 border border-blue-200 rounded p-4">
+            <h3 class="font-semibold text-blue-800 mb-2">Base URL</h3>
+            <code class="text-blue-600">http://localhost:8080</code>
+        </div>
+    </div>
+
+    <!-- Quick Start -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Quick Start</h2>
+        <div class="space-y-4">
+            <div>
+                <h3 class="font-semibold text-gray-700 mb-2">1. Add a User</h3>
+                <pre class="bg-gray-100 p-3 rounded overflow-x-auto"><code class="language-bash">curl -X POST http://localhost:8080/admin/addUser \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "phone=+1234567890&pin=1234&balance=100.00"</code></pre>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-700 mb-2">2. Get All Users (JSON)</h3>
+                <pre class="bg-gray-100 p-3 rounded overflow-x-auto"><code class="language-bash">curl -X GET http://localhost:8080/api/users</code></pre>
+            </div>
+            <div>
+                <h3 class="font-semibold text-gray-700 mb-2">3. Send Money</h3>
+                <pre class="bg-gray-100 p-3 rounded overflow-x-auto"><code class="language-bash">curl -X POST http://localhost:8080/admin/sendMoney \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "fromPhone=+1234567890&toPhone=+0987654321&amount=50.00"</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- JSON API Endpoints -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">JSON API Endpoints</h2>
+        
+        <!-- User Management -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-3 text-blue-600">User Management</h3>
+            
+            <!-- Get All Users -->
+            <div class="border border-gray-200 rounded p-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium mr-2">GET</span>
+                    <code class="text-gray-800">/api/users</code>
+                </div>
+                <p class="text-gray-600 mb-3">Retrieve all users in JSON format</p>
+                <div class="bg-gray-50 p-3 rounded">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Example Response:</p>
+                    <pre class="text-sm overflow-x-auto"><code class="language-json">[
+  {"phone": "+1234567890"},
+  {"phone": "+0987654321"}
+]</code></pre>
+                </div>
+            </div>
+
+            <!-- Get User Balance -->
+            <div class="border border-gray-200 rounded p-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-2">POST</span>
+                    <code class="text-gray-800">/api/users/balance</code>
+                </div>
+                <p class="text-gray-600 mb-3">Get balance for a specific user</p>
+                <div class="bg-gray-50 p-3 rounded mb-3">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Parameters:</p>
+                    <ul class="text-sm text-gray-600">
+                        <li><code>phone</code> (string, required) - User's phone number</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 p-3 rounded">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Example Response:</p>
+                    <pre class="text-sm overflow-x-auto"><code class="language-json">{
+  "phone": "+1234567890",
+  "balance": 100.50
+}</code></pre>
+                </div>
+            </div>
+
+            <!-- Get User Transactions -->
+            <div class="border border-gray-200 rounded p-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-2">POST</span>
+                    <code class="text-gray-800">/api/users/transactions</code>
+                </div>
+                <p class="text-gray-600 mb-3">Get transaction history for a specific user</p>
+                <div class="bg-gray-50 p-3 rounded mb-3">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Parameters:</p>
+                    <ul class="text-sm text-gray-600">
+                        <li><code>phone</code> (string, required) - User's phone number</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 p-3 rounded">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Example Response:</p>
+                    <pre class="text-sm overflow-x-auto"><code class="language-json">{
+  "phone": "+1234567890",
+  "transactions": [
+    {
+      "id": "T1642512345678",
+      "description": "Sent to +0987654321",
+      "amount": -50.00,
+      "date": "2025-01-15 10:30:00"
+    }
+  ]
+}</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Operations -->
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-3 text-blue-600">Service Operations</h3>
+            
+            <!-- Send Money -->
+            <div class="border border-gray-200 rounded p-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-2">POST</span>
+                    <code class="text-gray-800">/admin/sendMoney</code>
+                </div>
+                <p class="text-gray-600 mb-3">Transfer money between users</p>
+                <div class="bg-gray-50 p-3 rounded mb-3">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Parameters:</p>
+                    <ul class="text-sm text-gray-600">
+                        <li><code>fromPhone</code> (string, required) - Sender's phone number</li>
+                        <li><code>toPhone</code> (string, required) - Recipient's phone number</li>
+                        <li><code>amount</code> (number, required) - Amount to transfer</li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 p-3 rounded">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Example cURL:</p>
+                    <pre class="text-sm overflow-x-auto"><code class="language-bash">curl -X POST http://localhost:8080/admin/sendMoney \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "fromPhone=+1234567890&toPhone=+0987654321&amount=50.00"</code></pre>
+                </div>
+            </div>
+
+            <!-- Buy Airtime -->
+            <div class="border border-gray-200 rounded p-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-2">POST</span>
+                    <code class="text-gray-800">/admin/buyAirtime</code>
+                </div>
+                <p class="text-gray-600 mb-3">Purchase airtime for a user</p>
+                <div class="bg-gray-50 p-3 rounded mb-3">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Parameters:</p>
+                    <ul class="text-sm text-gray-600">
+                        <li><code>phone</code> (string, required) - User's phone number</li>
+                        <li><code>amount</code> (number, required) - Airtime amount</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Pay with MoMo -->
+            <div class="border border-gray-200 rounded p-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-2">POST</span>
+                    <code class="text-gray-800">/admin/payWithMoMo</code>
+                </div>
+                <p class="text-gray-600 mb-3">Make payment to a merchant</p>
+                <div class="bg-gray-50 p-3 rounded mb-3">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Parameters:</p>
+                    <ul class="text-sm text-gray-600">
+                        <li><code>phone</code> (string, required) - User's phone number</li>
+                        <li><code>merchant</code> (string, required) - Merchant name</li>
+                        <li><code>amount</code> (number, required) - Payment amount</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Savings & Loans -->
+            <div class="border border-gray-200 rounded p-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm font-medium mr-2">POST</span>
+                    <code class="text-gray-800">/admin/savingsLoans</code>
+                </div>
+                <p class="text-gray-600 mb-3">Savings and loan operations</p>
+                <div class="bg-gray-50 p-3 rounded mb-3">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Parameters:</p>
+                    <ul class="text-sm text-gray-600">
+                        <li><code>phone</code> (string, required) - User's phone number</li>
+                        <li><code>action</code> (string, required) - "save" or "loan"</li>
+                        <li><code>amount</code> (number, required) - Amount</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- XML API Endpoints -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">XML API Endpoints</h2>
+        
+        <div class="mb-6">
+            <h3 class="text-lg font-semibold mb-3 text-green-600">User Management</h3>
+            
+            <!-- Get All Users XML -->
+            <div class="border border-gray-200 rounded p-4 mb-4">
+                <div class="flex items-center mb-2">
+                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-sm font-medium mr-2">GET</span>
+                    <code class="text-gray-800">/api/users/xml</code>
+                </div>
+                <p class="text-gray-600 mb-3">Retrieve all users in XML format</p>
+                <div class="bg-gray-50 p-3 rounded">
+                    <p class="text-sm font-semibold text-gray-700 mb-2">Example Response:</p>
+                    <pre class="text-sm overflow-x-auto"><code class="language-xml">&lt;users&gt;
+  &lt;user&gt;&lt;phone&gt;+1234567890&lt;/phone&gt;&lt;/user&gt;
+  &lt;user&gt;&lt;phone&gt;+0987654321&lt;/phone&gt;&lt;/user&gt;
+&lt;/users&gt;</code></pre>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-yellow-50 border border-yellow-200 rounded p-4">
+            <h3 class="font-semibold text-yellow-800 mb-2">Note</h3>
+            <p class="text-yellow-700">
+                XML endpoints follow the same parameter structure as JSON endpoints but return XML responses. 
+                All service operations have corresponding XML versions that can be accessed by appending '/xml' to the endpoint path.
+            </p>
+        </div>
+    </div>
+
+    <!-- Testing with Different Tools -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Testing with Different Tools</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- cURL Examples -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-blue-600">cURL</h3>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Add User</h4>
+                        <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code class="language-bash">curl -X POST http://localhost:8080/admin/addUser \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "phone=+1234567890&pin=1234&balance=100.00"</code></pre>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Get User Balance</h4>
+                        <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code class="language-bash">curl -X POST http://localhost:8080/api/users/balance \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "phone=+1234567890"</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JavaScript/Fetch Examples -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-green-600">JavaScript (Fetch)</h3>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Add User</h4>
+                        <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code class="language-javascript">fetch('http://localhost:8080/admin/addUser', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded'
+  },
+  body: 'phone=+1234567890&pin=1234&balance=100.00'
+})
+.then(response => response.text())
+.then(data => console.log(data));</code></pre>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-700 mb-2">Get Users</h4>
+                        <pre class="bg-gray-100 p-3 rounded text-sm overflow-x-auto"><code class="language-javascript">fetch('http://localhost:8080/api/users')
+.then(response => response.json())
+.then(users => console.log(users));</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Error Handling -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Error Handling</h2>
+        
+        <div class="space-y-4">
+            <div>
+                <h3 class="font-semibold text-gray-700 mb-2">Common Error Responses</h3>
+                <div class="bg-gray-50 p-3 rounded">
+                    <pre class="text-sm overflow-x-auto"><code class="language-json">{
+  "error": "User not found"
+}
+
+{
+  "error": "Insufficient funds"
+}
+
+{
+  "error": "Invalid amount"
+}</code></pre>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="font-semibold text-gray-700 mb-2">HTTP Status Codes</h3>
+                <ul class="text-sm text-gray-600 space-y-1">
+                    <li><code>200</code> - Success</li>
+                    <li><code>400</code> - Bad Request (invalid parameters)</li>
+                    <li><code>404</code> - Resource not found</li>
+                    <li><code>500</code> - Internal server error</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Integration Examples -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-semibold mb-4 text-gray-800">Integration Examples</h2>
+        
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-purple-600">Learning Mobile Money Flow</h3>
+                <p class="text-gray-600 mb-3">
+                    Use these endpoints to understand how mobile money services work:
+                </p>
+                <ol class="text-sm text-gray-600 space-y-2 list-decimal list-inside">
+                    <li>Create users with initial balances</li>
+                    <li>Simulate money transfers between users</li>
+                    <li>Test various services like airtime purchase, bill payments</li>
+                    <li>Monitor transaction history and balances</li>
+                    <li>Explore savings and loan functionalities</li>
+                </ol>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-purple-600">Building Your Own App</h3>
+                <p class="text-gray-600 mb-3">
+                    You can use these APIs to build your own mobile money application:
+                </p>
+                <ul class="text-sm text-gray-600 space-y-2 list-disc list-inside">
+                    <li>Create a mobile app that consumes these APIs</li>
+                    <li>Build a web dashboard for transaction monitoring</li>
+                    <li>Integrate with existing systems for payment processing</li>
+                    <li>Use as a testing backend for your mobile money solutions</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Initialize Prism.js for syntax highlighting
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.Prism) {
+        Prism.highlightAll();
+    }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Invest & Insure Service | MoMo USSD Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-4xl mx-auto mt-10 p-6">
+    <!-- Navigation -->
+    <nav class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-teal-600">Invest & Insure Management</h1>
+            <div class="space-x-4">
+                <a href="/admin" class="text-teal-600 hover:text-teal-800 font-medium">← Dashboard</a>
+                <a href="/admin/users" class="text-teal-600 hover:text-teal-800">Users</a>
+                <a href="/admin/services" class="text-teal-600 hover:text-teal-800">Services</a>
+                <a href="/admin/transactions" class="text-teal-600 hover:text-teal-800">Transactions</a>
+                <a href="/admin/api-docs" class="text-teal-600 hover:text-teal-800">API Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Message Display -->
+    <div th:if="${message}" class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+        <span th:text="${message}"></span>
+    </div>
+
+    <!-- Service Header -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex items-center mb-4">
+            <div class="bg-teal-100 p-3 rounded-full mr-4">
+                <svg class="w-8 h-8 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                </svg>
+            </div>
+            <div>
+                <h2 class="text-2xl font-bold text-teal-800">Invest & Insure Service</h2>
+                <p class="text-gray-600">Investment and insurance services</p>
+            </div>
+        </div>
+        
+        <!-- Service Stats -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+            <div class="bg-teal-50 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-teal-800">Total Users</h3>
+                <p class="text-2xl font-bold text-teal-600" th:text="${users.size()}">0</p>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-green-800">Service Status</h3>
+                <p class="text-2xl font-bold text-green-600">Active</p>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-lg">
+                <h3 class="text-lg font-semibold text-blue-800">API Endpoint</h3>
+                <p class="text-sm text-blue-600 font-mono">/admin/investInsure</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invest & Insure Form -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 class="text-xl font-bold mb-6 text-teal-800">Investment & Insurance Operations</h3>
+        
+        <form action="/admin/investInsure" method="post" class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input name="phone" placeholder="Enter phone number" 
+                           class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" 
+                           required>
+                    <p class="text-sm text-gray-500 mt-1">Your mobile money account number</p>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Action</label>
+                    <select name="action" class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                        <option value="">Select Action</option>
+                        <option value="invest">Make Investment</option>
+                        <option value="insure">Buy Insurance</option>
+                    </select>
+                    <p class="text-sm text-gray-500 mt-1">Choose to invest or buy insurance</p>
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">Amount</label>
+                <input name="amount" placeholder="Enter amount" type="number" step="0.01" 
+                       class="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" 
+                       required>
+                <p class="text-sm text-gray-500 mt-1">Amount must be greater than 0</p>
+            </div>
+            
+            <!-- Quick Action Buttons -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Investment Packages</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" onclick="setInvestAmount(500)" class="bg-teal-100 text-teal-800 p-3 rounded-lg hover:bg-teal-200 transition-colors">$500 Starter</button>
+                        <button type="button" onclick="setInvestAmount(1000)" class="bg-teal-100 text-teal-800 p-3 rounded-lg hover:bg-teal-200 transition-colors">$1,000 Standard</button>
+                        <button type="button" onclick="setInvestAmount(5000)" class="bg-teal-100 text-teal-800 p-3 rounded-lg hover:bg-teal-200 transition-colors">$5,000 Premium</button>
+                        <button type="button" onclick="setInvestAmount(10000)" class="bg-teal-100 text-teal-800 p-3 rounded-lg hover:bg-teal-200 transition-colors">$10,000 Elite</button>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Insurance Plans</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <button type="button" onclick="setInsuranceAmount(50)" class="bg-blue-100 text-blue-800 p-3 rounded-lg hover:bg-blue-200 transition-colors">$50 Basic</button>
+                        <button type="button" onclick="setInsuranceAmount(100)" class="bg-blue-100 text-blue-800 p-3 rounded-lg hover:bg-blue-200 transition-colors">$100 Standard</button>
+                        <button type="button" onclick="setInsuranceAmount(200)" class="bg-blue-100 text-blue-800 p-3 rounded-lg hover:bg-blue-200 transition-colors">$200 Premium</button>
+                        <button type="button" onclick="setInsuranceAmount(500)" class="bg-blue-100 text-blue-800 p-3 rounded-lg hover:bg-blue-200 transition-colors">$500 Comprehensive</button>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="w-full bg-teal-600 text-white px-6 py-3 rounded-lg hover:bg-teal-700 transition-colors font-semibold">
+                Process Request
+            </button>
+        </form>
+    </div>
+
+    <!-- Service Information -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-xl font-bold mb-4 text-teal-800">Investment Options</h3>
+            <div class="space-y-3">
+                <div class="p-3 bg-teal-50 rounded-lg">
+                    <h4 class="font-semibold text-teal-700">Starter Package</h4>
+                    <p class="text-sm text-gray-600">Low-risk investment starting at $500</p>
+                </div>
+                <div class="p-3 bg-teal-50 rounded-lg">
+                    <h4 class="font-semibold text-teal-700">Standard Package</h4>
+                    <p class="text-sm text-gray-600">Balanced portfolio starting at $1,000</p>
+                </div>
+                <div class="p-3 bg-teal-50 rounded-lg">
+                    <h4 class="font-semibold text-teal-700">Premium Package</h4>
+                    <p class="text-sm text-gray-600">High-yield investment starting at $5,000</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-xl font-bold mb-4 text-blue-800">Insurance Plans</h3>
+            <div class="space-y-3">
+                <div class="p-3 bg-blue-50 rounded-lg">
+                    <h4 class="font-semibold text-blue-700">Basic Coverage</h4>
+                    <p class="text-sm text-gray-600">Essential protection for $50/month</p>
+                </div>
+                <div class="p-3 bg-blue-50 rounded-lg">
+                    <h4 class="font-semibold text-blue-700">Standard Coverage</h4>
+                    <p class="text-sm text-gray-600">Enhanced protection for $100/month</p>
+                </div>
+                <div class="p-3 bg-blue-50 rounded-lg">
+                    <h4 class="font-semibold text-blue-700">Comprehensive Coverage</h4>
+                    <p class="text-sm text-gray-600">Full protection for $500/month</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- API Information -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h3 class="text-xl font-bold mb-4 text-gray-800">API Information</h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="text-lg font-semibold text-gray-700 mb-3">REST Endpoint</h4>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <p class="text-sm font-semibold text-gray-700">POST /admin/investInsure</p>
+                    <div class="mt-3 text-sm text-gray-600">
+                        <p><strong>Parameters:</strong></p>
+                        <ul class="list-disc list-inside mt-1">
+                            <li>phone (string, required)</li>
+                            <li>action (string, required) - "invest" or "insure"</li>
+                            <li>amount (number, required)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <h4 class="text-lg font-semibold text-gray-700 mb-3">Example cURL</h4>
+                <div class="bg-gray-50 p-4 rounded-lg">
+                    <pre class="text-sm text-gray-800 overflow-x-auto"><code>curl -X POST http://localhost:8080/admin/investInsure \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "phone=+1234567890&action=invest&amount=1000.00"</code></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function setInvestAmount(amount) {
+    document.querySelector('input[name="amount"]').value = amount;
+    document.querySelector('select[name="action"]').value = 'invest';
+}
+
+function setInsuranceAmount(amount) {
+    document.querySelector('input[name="amount"]').value = amount;
+    document.querySelector('select[name="action"]').value = 'insure';
+}
+</script>
+</body>
+</html>
