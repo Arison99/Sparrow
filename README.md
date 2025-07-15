@@ -1,107 +1,90 @@
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Arison99/Sparrow/.github/workflows/maven.yml?branch=main)](https://github.com/Arison99/Sparrow/actions)
-[![Version](https://img.shields.io/github/v/release/Arison99/Sparrow)](https://github.com/Arison99/Sparrow/releases)
-[![Stars](https://img.shields.io/github/stars/Arison99/Sparrow)](https://github.com/Arison99/Sparrow/stargazers)
-[![Forks](https://img.shields.io/github/forks/Arison99/Sparrow)](https://github.com/Arison99/Sparrow/network/members)
-[![Commits](https://img.shields.io/github/commit-activity/m/Arison99/Sparrow)](https://github.com/Arison99/Sparrow/commits)
-[![Issues](https://img.shields.io/github/issues/Arison99/Sparrow)](https://github.com/Arison99/Sparrow/issues)
-[![Java](https://img.shields.io/badge/language-Java-blue)](https://www.java.com/)
-[![Spring Boot](https://img.shields.io/badge/language-Spring%20Boot-brightgreen)](https://spring.io/projects/spring-boot)
 
+# Mobile Money Simulator
 
+![GitHub stars](https://img.shields.io/github/stars/arison99/Mobile-Money-Simulator?style=social)
+![GitHub forks](https://img.shields.io/github/forks/arison99/Mobile-Money-Simulator?style=social)
+![GitHub issues](https://img.shields.io/github/issues/arison99/Mobile-Money-Simulator)
+![GitHub license](https://img.shields.io/github/license/arison99/Mobile-Money-Simulator)
+![Java](https://img.shields.io/badge/Java-11%2B-blue)
+![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20Linux%20%7C%20MacOS-lightgrey)
 
-## Sparrow - A Telecommunication System
+## 📖 Overview
 
-<img align="center" src="./logo.png" width="100%" height="600px">
+The **Mobile Money Simulator** is a Java-based application that simulates a USSD-based mobile money service. It provides a graphical interface for users to interact with menus, perform transactions, and simulate various mobile money operations such as checking balances, calculating fees, and changing PINs.
 
-Sparrow is a comprehensive telecommunications system designed to handle modern voice and video communication, mobile money transactions, and SMS services. Built with Java and Spring Boot, Sparrow provides a robust backend to manage the complexities of real-time communication, including WebRTC signaling for peer-to-peer connections. Sparrow can be integrated into your WebApps to understand how Payment systems work, video calls, VOIP, SMS and Calls. 
-    Sparrow is designed using Java and it's part of the Projects am currently undertaking.
-Feel free to test the software & provide some feedback.
+## ✨ Features
 
-## Features:
+- **USSD Menu Simulation**: Navigate through a multi-level menu system.
+- **Balance Inquiry**: Check your account balance securely.
+- **Fee Calculator**: Calculate transaction fees dynamically.
+- **Transaction History**: View recent transactions.
+- **PIN Management**: Change or reset your PIN.
+- **Reversal Requests**: Initiate transaction reversals.
+- **Customizable Backend**: Simulated backend services for user data and transactions.
 
-**Voice and Video Calls**: Enable high-quality voice and video calls with WebRTC support for real-time communication.
-
-**Mobile Money**: Secure transactions for mobile money services, allowing users to send and receive payments seamlessly.
-
-**SMS Service**: Simple, reliable SMS service for sending and receiving text messages.
-
-**Real-Time Signaling**: WebSocket-based signaling system for initiating and managing WebRTC connections.
-
-
-**Technologies Used**:
-
-- Java 17
-- Spring Boot
-- WebRTC
-- WebSocket
-- JUnit for testing
-
-
-This project is ideal for anyone interested in building a scalable and modular telecommunication system with both backend and real-time frontend features.
-
-## Getting Started
+## 🛠️ Setup Instructions
 
 ### Prerequisites
+- Java 11 or higher installed on your system.
+- A Java IDE (e.g., IntelliJ IDEA, Eclipse) or a text editor with Java support.
 
-- Java 11 or higher
-- Maven 3.6.3 or higher
-
-### Installation
-
+### Steps
 1. Clone the repository:
-    ```sh
-    git clone https://github.com/Arison99/Sparrow.git
-    cd Sparrow
-    ```
+   ```bash
+   git clone https://github.com/arison99/Mobile-Money-Simulator.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd Mobile-Money-Simulator
+   ```
+3. Open the project in your preferred IDE.
+4. Run the `MoMoUSDDApplication.java` file to start the simulator.
 
-2. Build the project:
-    ```sh
-    mvn clean install
-    ```
+## 🚀 Usage
 
-3. Run the application:
-    ```sh
-    mvn spring-boot:run
-    ```
+1. Launch the application.
+2. Navigate through the USSD menu using the displayed options.
+3. Perform operations such as checking your balance, calculating fees, or changing your PIN.
+4. Exit the application by selecting the "CANCEL" button.
 
-## Usage
+## 📂 Project Structure
 
-### API Endpoints
-
-- **Start Call**: `POST /api/call/start`
-- **End Call**: `POST /api/call/end`
-- **Send SMS**: `POST /api/sms/send`
-- **Mobile Money Transfer**: `POST /api/mobile-money/transfer`
-
-### sparrow Requests
-
-#### Start Call
-```sh
-curl -X POST "http://localhost:8080/api/call/start" -d "caller=user1&callee=user2"
 ```
-### End Call
-```sh
-curl -X POST "http://localhost:8080/api/call/end" -d "callId=1"
-```
-### Running Tests
-To run the tests, use the following command:
-```sh
-  mvn test
+Mobile-Money-Simulator/
+├── MoMoUSDDApplication.java   # Main application entry point
+├── BackendService.java        # Simulated backend services
+├── Readme.md                  # Project documentation
+└── ...                        # Other supporting files
 ```
 
-### Contributing
-- Contributions are welcome! Please read the CONTRIBUTING.md for guidelines.
+## 🤝 Contributing
 
-### License
-This project is licensed under the MIT License - see the LICENSE file for details.
+Contributions are welcome! To contribute:
+1. Fork the repository.
+2. Create a new branch for your feature or bug fix:
+   ```bash
+   git checkout -b feature-name
+   ```
+3. Commit your changes:
+   ```bash
+   git commit -m "Add feature-name"
+   ```
+4. Push to your branch:
+   ```bash
+   git push origin feature-name
+   ```
+5. Open a pull request.
 
-Acknowledgements
-Spring Boot
-Maven
+## 📜 License
 
-### Contact
-- For any inquiries, please contact
-### Arison99.
+This project is licensed under the [MIT License](LICENSE).
 
+## 🌟 Show Your Support
 
+If you like this project, please give it a ⭐️ and consider forking it to contribute!
 
+## 📧 Contact
+
+For any inquiries or feedback, feel free to reach out:
+- **Email**: harrisondaviinci@gmail.com
+- **GitHub**: [arison99](https://github.com/arison99)
