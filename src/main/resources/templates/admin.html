@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Backend Admin UI</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-6xl mx-auto mt-10 p-6">
+    <!-- Navigation -->
+    <nav class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">MoMo USSD Admin Panel</h1>
+            <div class="space-x-4">
+                <a href="/admin" class="text-blue-600 hover:text-blue-800 font-medium">Dashboard</a>
+                <a href="/admin/users" class="text-blue-600 hover:text-blue-800">Users</a>
+                <a href="/admin/services" class="text-blue-600 hover:text-blue-800">Services</a>
+                <a href="/admin/transactions" class="text-blue-600 hover:text-blue-800">Transactions</a>
+                <a href="/admin/api-docs" class="text-blue-600 hover:text-blue-800">API Docs</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-6 text-center text-gray-800">Admin Dashboard</h2>
+        
+        <!-- Message Display -->
+        <div th:if="${message}" class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            <span th:text="${message}"></span>
+        </div>
+
+        <!-- Quick Actions Section -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Actions</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="/admin/users" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 text-center transition-colors">
+                    <div class="font-semibold">User Management</div>
+                    <div class="text-sm opacity-90">Add & manage users</div>
+                </a>
+                <a href="/admin/services" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 text-center transition-colors">
+                    <div class="font-semibold">Services</div>
+                    <div class="text-sm opacity-90">Mobile money services</div>
+                </a>
+                <a href="/admin/transactions" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 text-center transition-colors">
+                    <div class="font-semibold">Transactions</div>
+                    <div class="text-sm opacity-90">View & add transactions</div>
+                </a>
+                <a href="/admin/api-docs" class="bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700 text-center transition-colors">
+                    <div class="font-semibold">API Documentation</div>
+                    <div class="text-sm opacity-90">REST & XML endpoints</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Admin Operations Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        
+        <!-- Add User Card -->
+        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+            <h3 class="text-lg font-semibold mb-3 text-blue-800">Add User</h3>
+            <form action="/admin/addUser" method="post" class="space-y-3">
+                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="pin" placeholder="PIN" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="balance" placeholder="Initial Balance" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add User</button>
+            </form>
+        </div>
+
+        <!-- Add Transaction Card -->
+        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+            <h3 class="text-lg font-semibold mb-3 text-green-800">Add Transaction</h3>
+            <form action="/admin/addTransaction" method="post" class="space-y-3">
+                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="description" placeholder="Description" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add Transaction</button>
+            </form>
+        </div>
+
+        <!-- Send Money Card -->
+        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+            <h3 class="text-lg font-semibold mb-3 text-purple-800">Send Money</h3>
+            <form action="/admin/sendMoney" method="post" class="space-y-3">
+                <input name="fromPhone" placeholder="From Phone" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="toPhone" placeholder="To Phone" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Send Money</button>
+            </form>
+        </div>
+
+        <!-- Buy Airtime Card -->
+        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+            <h3 class="text-lg font-semibold mb-3 text-orange-800">Buy Airtime</h3>
+            <form action="/admin/buyAirtime" method="post" class="space-y-3">
+                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700">Buy Airtime</button>
+            </form>
+        </div>
+
+        <!-- Pay with MoMo Card -->
+        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+            <h3 class="text-lg font-semibold mb-3 text-yellow-800">Pay with MoMo</h3>
+            <form action="/admin/payWithMoMo" method="post" class="space-y-3">
+                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="merchant" placeholder="Merchant Name" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Pay with MoMo</button>
+            </form>
+        </div>
+
+        <!-- Pay Bill Card -->
+        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+            <h3 class="text-lg font-semibold mb-3 text-red-800">Pay Bill</h3>
+            <form action="/admin/payBill" method="post" class="space-y-3">
+                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="biller" placeholder="Biller Name" class="w-full border border-gray-300 p-2 rounded" required>
+                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Pay Bill</button>
+            </form>
+        </div>
+
+        <!-- Savings & Loans Card -->
+        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
+            <h3 class="text-lg font-semibold mb-3 text-indigo-800">Savings & Loans</h3>
+            <form action="/admin/savingsLoans" method="post" class="space-y-3">
+                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
+                <select name="action" class="w-full border border-gray-300 p-2 rounded" required>
+                    <option value="">Select Action</option>
+                    <option value="save">Save Money</option>
+                    <option value="loan">Request Loan</option>
+                </select>
+                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Process</button>
+            </form>
+        </div>
+
+        <!-- Financial Services Card -->
+        <div class="bg-pink-50 p-4 rounded-lg border border-pink-200">
+            <h3 class="text-lg font-semibold mb-3 text-pink-800">Financial Services</h3>
+            <form action="/admin/financialServices" method="post" class="space-y-3">
+                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
+                <select name="service" class="w-full border border-gray-300 p-2 rounded" required>
+                    <option value="">Select Service</option>
+                    <option value="insurance">Insurance</option>
+                    <option value="investment">Investment</option>
+                </select>
+                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700">Process</button>
+            </form>
+        </div>
+
+        <!-- Invest & Insure Card -->
+        <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
+            <h3 class="text-lg font-semibold mb-3 text-teal-800">Invest & Insure</h3>
+            <form action="/admin/investInsure" method="post" class="space-y-3">
+                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
+                <select name="action" class="w-full border border-gray-300 p-2 rounded" required>
+                    <option value="">Select Action</option>
+                    <option value="invest">Invest</option>
+                    <option value="insure">Buy Insurance</option>
+                </select>
+                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
+                <button type="submit" class="w-full bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Process</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- API Endpoints Section -->
+    <div class="mb-8 p-4 bg-gray-50 rounded-lg">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">API Endpoints</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <a href="/api/users" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-center">Users JSON</a>
+            <a href="/api/users/xml" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">Users XML</a>
+            <button onclick="getUserBalance()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Get Balance</button>
+        </div>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-white rounded-lg shadow">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">Users</h3>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <tr th:each="user : ${users}">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${user.phoneNumber}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900" th:text="${#numbers.formatDecimal(user.balance, 0, 2)}"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button onclick="getTransactions(this.dataset.phone)" th:attr="data-phone=${user.phoneNumber}" class="text-blue-600 hover:text-blue-900">View Transactions</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function getUserBalance() {
+    const phone = prompt("Enter phone number:");
+    if (phone) {
+        fetch('/api/users/balance', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: 'phone=' + encodeURIComponent(phone)
+        })
+        .then(response => response.text())
+        .then(data => alert(data))
+        .catch(error => alert('Error: ' + error));
+    }
+}
+
+function getTransactions(phone) {
+    fetch('/api/users/transactions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'phone=' + encodeURIComponent(phone)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            alert('Error: ' + data.error);
+        } else {
+            let message = `Transactions for ${data.phone}:\n\n`;
+            data.transactions.forEach(txn => {
+                message += `ID: ${txn.id}\nDescription: ${txn.description}\nAmount: $${txn.amount}\nDate: ${txn.date}\n\n`;
+            });
+            alert(message);
+        }
+    })
+    .catch(error => alert('Error: ' + error));
+}
+</script>
+</body>
+</html>
