@@ -20,9 +20,7 @@
                 <a href="/admin/api-docs" class="text-blue-600 hover:text-blue-800">API Docs</a>
             </div>
         </div>
-    </nav>
-
-    <div class="bg-white rounded-lg shadow p-6">
+    </nav>    <div class="bg-white rounded-lg shadow p-6">
         <h2 class="text-xl font-bold mb-6 text-center text-gray-800">Admin Dashboard</h2>
         
         <!-- Message Display -->
@@ -30,6 +28,148 @@
             <span th:text="${message}"></span>
         </div>
 
+        <!-- System Overview -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">System Overview</h3>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-2.025M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Total Users</p>
+                            <p class="text-2xl font-bold text-blue-600" th:text="${users.size()}">0</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div class="flex items-center">
+                        <div class="bg-green-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">Active Services</p>
+                            <p class="text-2xl font-bold text-green-600">6</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <div class="flex items-center">
+                        <div class="bg-purple-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">API Endpoints</p>
+                            <p class="text-2xl font-bold text-purple-600">15+</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                    <div class="flex items-center">
+                        <div class="bg-orange-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-600">System Status</p>
+                            <p class="text-2xl font-bold text-orange-600">Online</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Service Management -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Service Management</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="/admin/service/send-money" class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-purple-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2h4a1 1 0 011 1v1a1 1 0 01-1 1h-1v10a2 2 0 01-2 2H6a2 2 0 01-2-2V7H3a1 1 0 01-1-1V5a1 1 0 011-1h4z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-purple-800">Send Money</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">Secure peer-to-peer money transfers</p>
+                    <span class="text-xs text-purple-600 font-medium">Manage Service →</span>
+                </a>
+                
+                <a href="/admin/service/buy-airtime" class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-orange-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-orange-800">Buy Airtime</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">Mobile airtime top-up services</p>
+                    <span class="text-xs text-orange-600 font-medium">Manage Service →</span>
+                </a>
+                
+                <a href="/admin/service/pay-with-momo" class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-yellow-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-yellow-800">Pay with MoMo</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">Merchant payment processing</p>
+                    <span class="text-xs text-yellow-600 font-medium">Manage Service →</span>
+                </a>
+                
+                <a href="/admin/service/pay-bill" class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-red-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-red-800">Pay Bill</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">Utility and service bill payments</p>
+                    <span class="text-xs text-red-600 font-medium">Manage Service →</span>
+                </a>
+                
+                <a href="/admin/service/savings-loans" class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-indigo-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-indigo-800">Savings & Loans</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">Financial savings and loan services</p>
+                    <span class="text-xs text-indigo-600 font-medium">Manage Service →</span>
+                </a>
+                
+                <a href="/admin/service/invest-insure" class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                    <div class="flex items-center mb-3">
+                        <div class="bg-teal-100 p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+                            </svg>
+                        </div>
+                        <h4 class="font-semibold text-teal-800">Invest & Insure</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-2">Investment and insurance services</p>
+                    <span class="text-xs text-teal-600 font-medium">Manage Service →</span>
+                </a>
+            </div>
+        </div>
         <!-- Quick Actions Section -->
         <div class="mb-8">
             <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Actions</h3>
@@ -51,131 +191,44 @@
                     <div class="text-sm opacity-90">REST & XML endpoints</div>
                 </a>
             </div>
-        </div>
+        </div>>        <!-- Quick Admin Operations -->
+        <div class="mb-8">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Admin Operations</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                
+                <!-- Add User Card -->
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <h4 class="text-md font-semibold mb-3 text-blue-800">Add User</h4>
+                    <form action="/admin/addUser" method="post" class="space-y-3">
+                        <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded text-sm" required>
+                        <input name="pin" placeholder="PIN" class="w-full border border-gray-300 p-2 rounded text-sm" required>
+                        <input name="balance" placeholder="Initial Balance" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded text-sm" required>
+                        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-sm">Add User</button>
+                    </form>
+                </div>
 
-        <!-- Admin Operations Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        
-        <!-- Add User Card -->
-        <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
-            <h3 class="text-lg font-semibold mb-3 text-blue-800">Add User</h3>
-            <form action="/admin/addUser" method="post" class="space-y-3">
-                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="pin" placeholder="PIN" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="balance" placeholder="Initial Balance" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Add User</button>
-            </form>
-        </div>
+                <!-- Add Transaction Card -->
+                <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h4 class="text-md font-semibold mb-3 text-green-800">Add Transaction</h4>
+                    <form action="/admin/addTransaction" method="post" class="space-y-3">
+                        <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded text-sm" required>
+                        <input name="description" placeholder="Description" class="w-full border border-gray-300 p-2 rounded text-sm" required>
+                        <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded text-sm" required>
+                        <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-sm">Add Transaction</button>
+                    </form>
+                </div>
 
-        <!-- Add Transaction Card -->
-        <div class="bg-green-50 p-4 rounded-lg border border-green-200">
-            <h3 class="text-lg font-semibold mb-3 text-green-800">Add Transaction</h3>
-            <form action="/admin/addTransaction" method="post" class="space-y-3">
-                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="description" placeholder="Description" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Add Transaction</button>
-            </form>
+                <!-- API Test Card -->
+                <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                    <h4 class="text-md font-semibold mb-3 text-purple-800">API Testing</h4>
+                    <div class="space-y-3">
+                        <button onclick="getUserBalance()" class="w-full bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 text-sm">Get Balance</button>
+                        <a href="/api/users" class="block w-full bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 text-center text-sm">Users JSON</a>
+                        <a href="/api/users/xml" class="block w-full bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 text-center text-sm">Users XML</a>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Send Money Card -->
-        <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
-            <h3 class="text-lg font-semibold mb-3 text-purple-800">Send Money</h3>
-            <form action="/admin/sendMoney" method="post" class="space-y-3">
-                <input name="fromPhone" placeholder="From Phone" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="toPhone" placeholder="To Phone" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Send Money</button>
-            </form>
-        </div>
-
-        <!-- Buy Airtime Card -->
-        <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
-            <h3 class="text-lg font-semibold mb-3 text-orange-800">Buy Airtime</h3>
-            <form action="/admin/buyAirtime" method="post" class="space-y-3">
-                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-orange-600 text-white px-4 py-2 rounded hover:bg-orange-700">Buy Airtime</button>
-            </form>
-        </div>
-
-        <!-- Pay with MoMo Card -->
-        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-            <h3 class="text-lg font-semibold mb-3 text-yellow-800">Pay with MoMo</h3>
-            <form action="/admin/payWithMoMo" method="post" class="space-y-3">
-                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="merchant" placeholder="Merchant Name" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700">Pay with MoMo</button>
-            </form>
-        </div>
-
-        <!-- Pay Bill Card -->
-        <div class="bg-red-50 p-4 rounded-lg border border-red-200">
-            <h3 class="text-lg font-semibold mb-3 text-red-800">Pay Bill</h3>
-            <form action="/admin/payBill" method="post" class="space-y-3">
-                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="biller" placeholder="Biller Name" class="w-full border border-gray-300 p-2 rounded" required>
-                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700">Pay Bill</button>
-            </form>
-        </div>
-
-        <!-- Savings & Loans Card -->
-        <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-200">
-            <h3 class="text-lg font-semibold mb-3 text-indigo-800">Savings & Loans</h3>
-            <form action="/admin/savingsLoans" method="post" class="space-y-3">
-                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
-                <select name="action" class="w-full border border-gray-300 p-2 rounded" required>
-                    <option value="">Select Action</option>
-                    <option value="save">Save Money</option>
-                    <option value="loan">Request Loan</option>
-                </select>
-                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Process</button>
-            </form>
-        </div>
-
-        <!-- Financial Services Card -->
-        <div class="bg-pink-50 p-4 rounded-lg border border-pink-200">
-            <h3 class="text-lg font-semibold mb-3 text-pink-800">Financial Services</h3>
-            <form action="/admin/financialServices" method="post" class="space-y-3">
-                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
-                <select name="service" class="w-full border border-gray-300 p-2 rounded" required>
-                    <option value="">Select Service</option>
-                    <option value="insurance">Insurance</option>
-                    <option value="investment">Investment</option>
-                </select>
-                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-pink-600 text-white px-4 py-2 rounded hover:bg-pink-700">Process</button>
-            </form>
-        </div>
-
-        <!-- Invest & Insure Card -->
-        <div class="bg-teal-50 p-4 rounded-lg border border-teal-200">
-            <h3 class="text-lg font-semibold mb-3 text-teal-800">Invest & Insure</h3>
-            <form action="/admin/investInsure" method="post" class="space-y-3">
-                <input name="phone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded" required>
-                <select name="action" class="w-full border border-gray-300 p-2 rounded" required>
-                    <option value="">Select Action</option>
-                    <option value="invest">Invest</option>
-                    <option value="insure">Buy Insurance</option>
-                </select>
-                <input name="amount" placeholder="Amount" type="number" step="0.01" class="w-full border border-gray-300 p-2 rounded" required>
-                <button type="submit" class="w-full bg-teal-600 text-white px-4 py-2 rounded hover:bg-teal-700">Process</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- API Endpoints Section -->
-    <div class="mb-8 p-4 bg-gray-50 rounded-lg">
-        <h3 class="text-lg font-semibold mb-4 text-gray-800">API Endpoints</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <a href="/api/users" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 text-center">Users JSON</a>
-            <a href="/api/users/xml" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 text-center">Users XML</a>
-            <button onclick="getUserBalance()" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">Get Balance</button>
-        </div>
-    </div>
 
     <!-- Users Table -->
     <div class="bg-white rounded-lg shadow">
