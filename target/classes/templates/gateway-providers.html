@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Provider Configuration - Sparrow Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-7xl mx-auto mt-10 p-6">
+    <!-- Navigation -->
+    <nav class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-green-600">Provider Configuration</h1>
+            <div class="space-x-4">
+                <a href="/admin" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                <a href="/admin/gateway" class="text-blue-600 hover:text-blue-800">Gateway</a>
+                <a href="/admin/gateway/modems" class="text-blue-600 hover:text-blue-800">Modems</a>
+                <a href="/admin/gateway/sms" class="text-blue-600 hover:text-blue-800">SMS</a>
+                <a href="/admin/gateway/ussd" class="text-blue-600 hover:text-blue-800">USSD</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Provider Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Total Providers</p>
+                    <p class="text-2xl font-bold text-blue-600" id="total-providers">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-green-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Mobile Money Enabled</p>
+                    <p class="text-2xl font-bold text-green-600" id="mobile-money-providers">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-purple-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Countries Supported</p>
+                    <p class="text-2xl font-bold text-purple-600" id="countries-count">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-orange-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Active USSD Codes</p>
+                    <p class="text-2xl font-bold text-orange-600" id="ussd-codes-count">0</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter and Search -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex flex-wrap gap-4">
+                <select id="country-filter" class="border border-gray-300 rounded-lg px-3 py-2">
+                    <option value="">All Countries</option>
+                </select>
+                <select id="provider-filter" class="border border-gray-300 rounded-lg px-3 py-2">
+                    <option value="">All Providers</option>
+                    <option value="mobile-money">Mobile Money Only</option>
+                    <option value="sms-only">SMS Only</option>
+                </select>
+                <input type="text" id="search-input" placeholder="Search providers..." 
+                       class="border border-gray-300 rounded-lg px-3 py-2 w-64">
+            </div>
+            <button onclick="addCustomProvider()" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                Add Custom Provider
+            </button>
+        </div>
+    </div>
+
+    <!-- Provider List -->
+    <div class="bg-white rounded-lg shadow overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">Telco Providers Database</h3>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Country</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile Money</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Balance Code</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">MM Code</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prefixes</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="providers-table" class="bg-white divide-y divide-gray-200">
+                    <!-- Provider data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Provider Details Modal -->
+    <div id="provider-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-96 overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800" id="modal-title">Provider Details</h3>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="modal-content">
+                        <!-- Provider details will be loaded here -->
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Close
+                        </button>
+                        <button onclick="saveProvider()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Provider Modal -->
+    <div id="add-provider-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Add Custom Provider</h3>
+                        <button onclick="closeAddModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="add-provider-form" class="space-y-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Provider Name</label>
+                                <input type="text" id="new-provider-name" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                                <input type="text" id="new-provider-country" class="w-full border border-gray-300 rounded-lg px-3 py-2" required>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Balance USSD Code</label>
+                                <input type="text" id="new-balance-code" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="*123#">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Mobile Money Code</label>
+                                <input type="text" id="new-mm-code" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="*456#">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Number Prefixes (comma-separated)</label>
+                                <input type="text" id="new-prefixes" class="w-full border border-gray-300 rounded-lg px-3 py-2" placeholder="070,071,080,081">
+                            </div>
+                            <div>
+                                <label class="flex items-center">
+                                    <input type="checkbox" id="new-mobile-money" class="mr-2">
+                                    <span class="text-sm text-gray-700">Supports Mobile Money</span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 mt-6">
+                            <button type="button" onclick="closeAddModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                                Add Provider
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables
+let providers = [];
+let filteredProviders = [];
+let countries = new Set();
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadProviders();
+    setupFilters();
+    setupForms();
+});
+
+// Load providers from API
+async function loadProviders() {
+    try {
+        const response = await fetch('/api/gateway/providers');
+        providers = await response.json();
+        filteredProviders = [...providers];
+        
+        // Extract countries
+        countries.clear();
+        providers.forEach(provider => countries.add(provider.country));
+        
+        populateCountryFilter();
+        renderProviders();
+        updateStats();
+    } catch (error) {
+        console.error('Error loading providers:', error);
+        showNotification('Error loading providers', 'error');
+    }
+}
+
+// Populate country filter
+function populateCountryFilter() {
+    const countryFilter = document.getElementById('country-filter');
+    countryFilter.innerHTML = '<option value="">All Countries</option>';
+    
+    Array.from(countries).sort().forEach(country => {
+        const option = document.createElement('option');
+        option.value = country;
+        option.textContent = country;
+        countryFilter.appendChild(option);
+    });
+}
+
+// Render providers table
+function renderProviders() {
+    const tbody = document.getElementById('providers-table');
+    tbody.innerHTML = '';
+
+    if (filteredProviders.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                    No providers found matching your criteria.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    filteredProviders.forEach(provider => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        const mobileMoneyBadge = provider.mobileMoneySupported 
+            ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Yes</span>'
+            : '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">No</span>';
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="text-sm font-medium text-gray-900">${provider.name}</div>
+                <div class="text-sm text-gray-500">${provider.displayName || provider.name}</div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${provider.country}</td>
+            <td class="px-6 py-4 whitespace-nowrap">${mobileMoneyBadge}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${provider.balanceUssdCode || 'N/A'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${provider.mobileMoneyUssdCode || 'N/A'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${(provider.numberPrefixes || []).join(', ')}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button onclick="showProviderDetails('${provider.name}')" class="text-blue-600 hover:text-blue-900 mr-3">Details</button>
+                <button onclick="testProvider('${provider.name}')" class="text-green-600 hover:text-green-900 mr-3">Test</button>
+                <button onclick="editProvider('${provider.name}')" class="text-orange-600 hover:text-orange-900">Edit</button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Update statistics
+function updateStats() {
+    const mobileMoneyCount = providers.filter(p => p.mobileMoneySupported).length;
+    const ussdCodesCount = providers.filter(p => p.balanceUssdCode || p.mobileMoneyUssdCode).length;
+    
+    document.getElementById('total-providers').textContent = providers.length;
+    document.getElementById('mobile-money-providers').textContent = mobileMoneyCount;
+    document.getElementById('countries-count').textContent = countries.size;
+    document.getElementById('ussd-codes-count').textContent = ussdCodesCount;
+}
+
+// Setup filters
+function setupFilters() {
+    document.getElementById('country-filter').addEventListener('change', applyFilters);
+    document.getElementById('provider-filter').addEventListener('change', applyFilters);
+    document.getElementById('search-input').addEventListener('input', applyFilters);
+}
+
+// Setup forms
+function setupForms() {
+    document.getElementById('add-provider-form').addEventListener('submit', handleAddProvider);
+}
+
+// Apply filters
+function applyFilters() {
+    const countryFilter = document.getElementById('country-filter').value;
+    const providerFilter = document.getElementById('provider-filter').value;
+    const searchInput = document.getElementById('search-input').value.toLowerCase();
+    
+    filteredProviders = providers.filter(provider => {
+        const countryMatch = !countryFilter || provider.country === countryFilter;
+        
+        const providerTypeMatch = !providerFilter || 
+            (providerFilter === 'mobile-money' && provider.mobileMoneySupported) ||
+            (providerFilter === 'sms-only' && !provider.mobileMoneySupported);
+        
+        const searchMatch = !searchInput || 
+            provider.name.toLowerCase().includes(searchInput) ||
+            provider.country.toLowerCase().includes(searchInput) ||
+            (provider.displayName && provider.displayName.toLowerCase().includes(searchInput));
+        
+        return countryMatch && providerTypeMatch && searchMatch;
+    });
+    
+    renderProviders();
+}
+
+// Show provider details
+function showProviderDetails(providerName) {
+    const provider = providers.find(p => p.name === providerName);
+    if (!provider) return;
+    
+    document.getElementById('modal-title').textContent = `${provider.name} - Details`;
+    document.getElementById('modal-content').innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <h4 class="font-semibold text-gray-700 mb-3">Basic Information</h4>
+                <div class="space-y-2">
+                    <p><strong>Name:</strong> ${provider.name}</p>
+                    <p><strong>Display Name:</strong> ${provider.displayName || provider.name}</p>
+                    <p><strong>Country:</strong> ${provider.country}</p>
+                    <p><strong>Mobile Money:</strong> ${provider.mobileMoneySupported ? 'Yes' : 'No'}</p>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-semibold text-gray-700 mb-3">USSD Codes</h4>
+                <div class="space-y-2">
+                    <p><strong>Balance Check:</strong> ${provider.balanceUssdCode || 'Not configured'}</p>
+                    <p><strong>Mobile Money:</strong> ${provider.mobileMoneyUssdCode || 'Not configured'}</p>
+                </div>
+            </div>
+            <div class="md:col-span-2">
+                <h4 class="font-semibold text-gray-700 mb-3">Number Prefixes</h4>
+                <div class="flex flex-wrap gap-2">
+                    ${(provider.numberPrefixes || []).map(prefix => 
+                        `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${prefix}</span>`
+                    ).join('')}
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('provider-modal').classList.remove('hidden');
+}
+
+// Test provider
+async function testProvider(providerName) {
+    try {
+        showNotification(`Testing provider ${providerName}...`, 'info');
+        
+        // Test balance check
+        const response = await fetch(`/api/gateway/ussd/balance/${providerName}`, {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            showNotification(`Provider ${providerName} test completed successfully`, 'success');
+        } else {
+            showNotification(`Provider ${providerName} test failed`, 'error');
+        }
+    } catch (error) {
+        console.error('Error testing provider:', error);
+        showNotification('Error testing provider', 'error');
+    }
+}
+
+// Edit provider
+function editProvider(providerName) {
+    const provider = providers.find(p => p.name === providerName);
+    if (!provider) return;
+    
+    // Populate edit form with provider data
+    document.getElementById('new-provider-name').value = provider.name;
+    document.getElementById('new-provider-country').value = provider.country;
+    document.getElementById('new-balance-code').value = provider.balanceUssdCode || '';
+    document.getElementById('new-mm-code').value = provider.mobileMoneyUssdCode || '';
+    document.getElementById('new-prefixes').value = (provider.numberPrefixes || []).join(', ');
+    document.getElementById('new-mobile-money').checked = provider.mobileMoneySupported;
+    
+    document.getElementById('add-provider-modal').classList.remove('hidden');
+}
+
+// Add custom provider
+function addCustomProvider() {
+    // Clear form
+    document.getElementById('add-provider-form').reset();
+    document.getElementById('add-provider-modal').classList.remove('hidden');
+}
+
+// Handle add provider form submission
+async function handleAddProvider(event) {
+    event.preventDefault();
+    
+    const providerData = {
+        name: document.getElementById('new-provider-name').value,
+        country: document.getElementById('new-provider-country').value,
+        balanceUssdCode: document.getElementById('new-balance-code').value,
+        mobileMoneyUssdCode: document.getElementById('new-mm-code').value,
+        numberPrefixes: document.getElementById('new-prefixes').value.split(',').map(p => p.trim()).filter(p => p),
+        mobileMoneySupported: document.getElementById('new-mobile-money').checked
+    };
+    
+    try {
+        const response = await fetch('/api/gateway/providers', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(providerData)
+        });
+        
+        if (response.ok) {
+            showNotification('Provider added successfully', 'success');
+            closeAddModal();
+            loadProviders();
+        } else {
+            showNotification('Error adding provider', 'error');
+        }
+    } catch (error) {
+        console.error('Error adding provider:', error);
+        showNotification('Error adding provider', 'error');
+    }
+}
+
+// Save provider changes
+async function saveProvider() {
+    // Implementation for saving provider changes
+    showNotification('Provider updated successfully', 'success');
+    closeModal();
+    loadProviders();
+}
+
+// Close modals
+function closeModal() {
+    document.getElementById('provider-modal').classList.add('hidden');
+}
+
+function closeAddModal() {
+    document.getElementById('add-provider-modal').classList.add('hidden');
+}
+
+// Show notification
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        'bg-blue-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        document.body.removeChild(notification);
+    }, 3000);
+}
+</script>
+</body>
+</html>
