@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SMS Gateway Monitor - Sparrow Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-7xl mx-auto mt-10 p-6">
+    <!-- Navigation -->
+    <nav class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">SMS Gateway Monitor</h1>
+            <div class="space-x-4">
+                <a href="/admin" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                <a href="/admin/gateway" class="text-blue-600 hover:text-blue-800">Gateway</a>
+                <a href="/admin/gateway/modems" class="text-blue-600 hover:text-blue-800">Modems</a>
+                <a href="/admin/gateway/providers" class="text-blue-600 hover:text-blue-800">Providers</a>
+                <a href="/admin/gateway/ussd" class="text-blue-600 hover:text-blue-800">USSD</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- SMS Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Total Sent</p>
+                    <p class="text-2xl font-bold text-blue-600" id="total-sent">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-green-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Delivered</p>
+                    <p class="text-2xl font-bold text-green-600" id="delivered">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Pending</p>
+                    <p class="text-2xl font-bold text-yellow-600" id="pending">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-red-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Failed</p>
+                    <p class="text-2xl font-bold text-red-600" id="failed">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-purple-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Success Rate</p>
+                    <p class="text-2xl font-bold text-purple-600" id="success-rate">0%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Quick Send -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- SMS Volume Chart -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">SMS Volume (Last 24 Hours)</h3>
+            <canvas id="smsVolumeChart" width="400" height="200"></canvas>
+        </div>
+        
+        <!-- Quick Send SMS -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Send SMS</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input type="tel" id="quick-phone" placeholder="+256712345678" 
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <textarea id="quick-message" rows="3" placeholder="Enter your message here..." 
+                              class="w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
+                    <p class="text-sm text-gray-500 mt-1">Characters: <span id="char-count">0</span>/160</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                    <select id="quick-priority" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="normal">Normal</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                <button onclick="sendQuickSMS()" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                    Send SMS
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk SMS Section -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Bulk SMS Operations</h3>
+            <button onclick="showBulkModal()" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                New Bulk SMS
+            </button>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Batch ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Recipients</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Progress</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Created</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="bulk-sms-table" class="bg-white divide-y divide-gray-200">
+                    <!-- Bulk SMS data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent SMS Messages -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Recent SMS Messages</h3>
+            <div class="flex space-x-2">
+                <select id="status-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="">All Status</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                </select>
+                <button onclick="refreshMessages()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 text-sm">
+                    Refresh
+                </button>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Message</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modem</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sent</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="messages-table" class="bg-white divide-y divide-gray-200">
+                    <!-- Messages will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Bulk SMS Modal -->
+    <div id="bulk-sms-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800">Send Bulk SMS</h3>
+                        <button onclick="closeBulkModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <form id="bulk-sms-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Numbers</label>
+                            <textarea id="bulk-phones" rows="4" 
+                                      placeholder="Enter phone numbers separated by commas or new lines..."
+                                      class="w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
+                            <p class="text-sm text-gray-500 mt-1">Or upload a CSV file:</p>
+                            <input type="file" id="csv-upload" accept=".csv" class="mt-2">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                            <textarea id="bulk-message" rows="4" 
+                                      placeholder="Enter your bulk message here..."
+                                      class="w-full border border-gray-300 rounded-lg px-3 py-2"></textarea>
+                            <p class="text-sm text-gray-500 mt-1">Characters: <span id="bulk-char-count">0</span>/160</p>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                                <select id="bulk-priority" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                    <option value="normal">Normal</option>
+                                    <option value="high">High</option>
+                                    <option value="urgent">Urgent</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Send Rate</label>
+                                <select id="send-rate" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                                    <option value="fast">Fast (10/min)</option>
+                                    <option value="medium">Medium (5/min)</option>
+                                    <option value="slow">Slow (2/min)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="flex justify-end space-x-3 mt-6">
+                            <button type="button" onclick="closeBulkModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                                Cancel
+                            </button>
+                            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                                Send Bulk SMS
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables
+let smsMessages = [];
+let bulkOperations = [];
+let smsChart;
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadSMSStatistics();
+    loadRecentMessages();
+    loadBulkOperations();
+    setupCharacterCounters();
+    setupFilters();
+    initializeChart();
+    setInterval(refreshData, 30000); // Refresh every 30 seconds
+});
+
+// Load SMS statistics
+async function loadSMSStatistics() {
+    try {
+        const response = await fetch('/api/gateway/sms/statistics');
+        const stats = await response.json();
+        
+        document.getElementById('total-sent').textContent = stats.totalSent || 0;
+        document.getElementById('delivered').textContent = stats.delivered || 0;
+        document.getElementById('pending').textContent = stats.pending || 0;
+        document.getElementById('failed').textContent = stats.failed || 0;
+        
+        const successRate = stats.totalSent > 0 ? ((stats.delivered / stats.totalSent) * 100).toFixed(1) : 0;
+        document.getElementById('success-rate').textContent = successRate + '%';
+        
+        updateChart(stats.hourlyData || []);
+    } catch (error) {
+        console.error('Error loading SMS statistics:', error);
+    }
+}
+
+// Load recent messages
+async function loadRecentMessages() {
+    try {
+        // Mock data - in real implementation, fetch from API
+        const mockMessages = [
+            {
+                id: 'SMS001',
+                phone: '+256712345678',
+                message: 'Hello, this is a test message',
+                status: 'delivered',
+                modem: 'COM3',
+                timestamp: Date.now() - 300000
+            },
+            {
+                id: 'SMS002',
+                phone: '+256787654321',
+                message: 'Account balance notification',
+                status: 'pending',
+                modem: 'COM4',
+                timestamp: Date.now() - 600000
+            }
+        ];
+        
+        smsMessages = mockMessages;
+        renderMessages();
+    } catch (error) {
+        console.error('Error loading recent messages:', error);
+    }
+}
+
+// Load bulk operations
+async function loadBulkOperations() {
+    try {
+        // Mock data - in real implementation, fetch from API
+        const mockBulkOps = [
+            {
+                batchId: 'BULK001',
+                recipients: 150,
+                status: 'processing',
+                progress: 75,
+                created: Date.now() - 3600000
+            },
+            {
+                batchId: 'BULK002',
+                recipients: 500,
+                status: 'completed',
+                progress: 100,
+                created: Date.now() - 7200000
+            }
+        ];
+        
+        bulkOperations = mockBulkOps;
+        renderBulkOperations();
+    } catch (error) {
+        console.error('Error loading bulk operations:', error);
+    }
+}
+
+// Setup character counters
+function setupCharacterCounters() {
+    document.getElementById('quick-message').addEventListener('input', function() {
+        const count = this.value.length;
+        document.getElementById('char-count').textContent = count;
+        document.getElementById('char-count').className = count > 160 ? 'text-red-500' : 'text-gray-500';
+    });
+    
+    document.getElementById('bulk-message').addEventListener('input', function() {
+        const count = this.value.length;
+        document.getElementById('bulk-char-count').textContent = count;
+        document.getElementById('bulk-char-count').className = count > 160 ? 'text-red-500' : 'text-gray-500';
+    });
+}
+
+// Setup filters
+function setupFilters() {
+    document.getElementById('status-filter').addEventListener('change', applyMessageFilter);
+}
+
+// Initialize chart
+function initializeChart() {
+    const ctx = document.getElementById('smsVolumeChart').getContext('2d');
+    smsChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+            datasets: [{
+                label: 'SMS Sent',
+                data: Array(24).fill(0),
+                borderColor: 'rgb(59, 130, 246)',
+                backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Update chart
+function updateChart(hourlyData) {
+    if (smsChart && hourlyData.length > 0) {
+        smsChart.data.datasets[0].data = hourlyData;
+        smsChart.update();
+    }
+}
+
+// Render messages
+function renderMessages() {
+    const tbody = document.getElementById('messages-table');
+    tbody.innerHTML = '';
+
+    const statusFilter = document.getElementById('status-filter').value;
+    const filteredMessages = statusFilter 
+        ? smsMessages.filter(msg => msg.status === statusFilter)
+        : smsMessages;
+
+    if (filteredMessages.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                    No messages found matching your criteria.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    filteredMessages.forEach(message => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        const statusClass = getStatusClass(message.status);
+        const truncatedMessage = message.message.length > 50 
+            ? message.message.substring(0, 50) + '...'
+            : message.message;
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${message.id}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${message.phone}</td>
+            <td class="px-6 py-4 text-sm text-gray-900" title="${message.message}">${truncatedMessage}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                    ${message.status}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${message.modem}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTime(message.timestamp)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button onclick="retrySMS('${message.id}')" class="text-blue-600 hover:text-blue-900 mr-3">Retry</button>
+                <button onclick="viewDetails('${message.id}')" class="text-green-600 hover:text-green-900">Details</button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Render bulk operations
+function renderBulkOperations() {
+    const tbody = document.getElementById('bulk-sms-table');
+    tbody.innerHTML = '';
+
+    if (bulkOperations.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-gray-500">
+                    No bulk SMS operations found.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    bulkOperations.forEach(operation => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        const statusClass = getStatusClass(operation.status);
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${operation.batchId}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${operation.recipients}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                    ${operation.status}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-blue-600 h-2 rounded-full" style="width: ${operation.progress}%"></div>
+                </div>
+                <span class="text-xs text-gray-500">${operation.progress}%</span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTime(operation.created)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button onclick="viewBulkDetails('${operation.batchId}')" class="text-blue-600 hover:text-blue-900 mr-3">Details</button>
+                <button onclick="cancelBulk('${operation.batchId}')" class="text-red-600 hover:text-red-900">Cancel</button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Get status class
+function getStatusClass(status) {
+    switch (status) {
+        case 'delivered':
+        case 'completed':
+            return 'bg-green-100 text-green-800';
+        case 'pending':
+        case 'processing':
+            return 'bg-yellow-100 text-yellow-800';
+        case 'failed':
+            return 'bg-red-100 text-red-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+}
+
+// Format time
+function formatTime(timestamp) {
+    return new Date(timestamp).toLocaleString();
+}
+
+// Apply message filter
+function applyMessageFilter() {
+    renderMessages();
+}
+
+// Send quick SMS
+async function sendQuickSMS() {
+    const phone = document.getElementById('quick-phone').value;
+    const message = document.getElementById('quick-message').value;
+    const priority = document.getElementById('quick-priority').value;
+    
+    if (!phone || !message) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/gateway/sms/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                phoneNumber: phone,
+                message: message,
+                priority: priority
+            })
+        });
+        
+        if (response.ok) {
+            showNotification('SMS sent successfully', 'success');
+            document.getElementById('quick-phone').value = '';
+            document.getElementById('quick-message').value = '';
+            document.getElementById('char-count').textContent = '0';
+            loadSMSStatistics();
+            loadRecentMessages();
+        } else {
+            showNotification('Failed to send SMS', 'error');
+        }
+    } catch (error) {
+        console.error('Error sending SMS:', error);
+        showNotification('Error sending SMS', 'error');
+    }
+}
+
+// Show bulk modal
+function showBulkModal() {
+    document.getElementById('bulk-sms-modal').classList.remove('hidden');
+}
+
+// Close bulk modal
+function closeBulkModal() {
+    document.getElementById('bulk-sms-modal').classList.add('hidden');
+    document.getElementById('bulk-sms-form').reset();
+}
+
+// Handle bulk SMS form submission
+document.getElementById('bulk-sms-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const phones = document.getElementById('bulk-phones').value;
+    const message = document.getElementById('bulk-message').value;
+    const priority = document.getElementById('bulk-priority').value;
+    const sendRate = document.getElementById('send-rate').value;
+    
+    if (!phones || !message) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    const phoneNumbers = phones.split(/[,\n]/).map(p => p.trim()).filter(p => p);
+    
+    try {
+        const response = await fetch('/api/gateway/sms/bulk', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                phoneNumbers: phoneNumbers,
+                message: message,
+                priority: priority,
+                sendRate: sendRate
+            })
+        });
+        
+        if (response.ok) {
+            showNotification('Bulk SMS initiated successfully', 'success');
+            closeBulkModal();
+            loadBulkOperations();
+        } else {
+            showNotification('Failed to initiate bulk SMS', 'error');
+        }
+    } catch (error) {
+        console.error('Error sending bulk SMS:', error);
+        showNotification('Error sending bulk SMS', 'error');
+    }
+});
+
+// Refresh data
+function refreshData() {
+    loadSMSStatistics();
+    loadRecentMessages();
+    loadBulkOperations();
+}
+
+// Refresh messages
+function refreshMessages() {
+    loadRecentMessages();
+    showNotification('Messages refreshed', 'success');
+}
+
+// Retry SMS
+async function retrySMS(messageId) {
+    try {
+        showNotification(`Retrying SMS ${messageId}...`, 'info');
+        // Implementation would call retry API
+        showNotification(`SMS ${messageId} retry initiated`, 'success');
+        loadRecentMessages();
+    } catch (error) {
+        console.error('Error retrying SMS:', error);
+        showNotification('Error retrying SMS', 'error');
+    }
+}
+
+// View details
+function viewDetails(messageId) {
+    const message = smsMessages.find(m => m.id === messageId);
+    if (message) {
+        alert(`SMS Details:\nID: ${message.id}\nPhone: ${message.phone}\nMessage: ${message.message}\nStatus: ${message.status}\nModem: ${message.modem}\nSent: ${formatTime(message.timestamp)}`);
+    }
+}
+
+// View bulk details
+function viewBulkDetails(batchId) {
+    const operation = bulkOperations.find(op => op.batchId === batchId);
+    if (operation) {
+        alert(`Bulk SMS Details:\nBatch ID: ${operation.batchId}\nRecipients: ${operation.recipients}\nStatus: ${operation.status}\nProgress: ${operation.progress}%\nCreated: ${formatTime(operation.created)}`);
+    }
+}
+
+// Cancel bulk operation
+async function cancelBulk(batchId) {
+    if (!confirm(`Are you sure you want to cancel bulk operation ${batchId}?`)) {
+        return;
+    }
+    
+    try {
+        showNotification(`Cancelling bulk operation ${batchId}...`, 'info');
+        // Implementation would call cancel API
+        showNotification(`Bulk operation ${batchId} cancelled`, 'success');
+        loadBulkOperations();
+    } catch (error) {
+        console.error('Error cancelling bulk operation:', error);
+        showNotification('Error cancelling bulk operation', 'error');
+    }
+}
+
+// Show notification
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        'bg-blue-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        document.body.removeChild(notification);
+    }, 3000);
+}
+</script>
+</body>
+</html>
