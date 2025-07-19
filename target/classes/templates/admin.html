@@ -11,11 +11,11 @@
     <!-- Navigation -->
     <nav class="bg-white rounded-lg shadow p-4 mb-6">
         <div class="flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-blue-600">MoMo USSD Admin Panel</h1>
-            <div class="space-x-4">
+            <h1 class="text-2xl font-bold text-blue-600">MoMo USSD Admin Panel</h1>            <div class="space-x-4">
                 <a href="/admin" class="text-blue-600 hover:text-blue-800 font-medium">Dashboard</a>
                 <a href="/admin/users" class="text-blue-600 hover:text-blue-800">Users</a>
                 <a href="/admin/services" class="text-blue-600 hover:text-blue-800">Services</a>
+                <a href="/admin/gateway" class="text-blue-600 hover:text-blue-800">Gateway</a>
                 <a href="/admin/transactions" class="text-blue-600 hover:text-blue-800">Transactions</a>
                 <a href="/admin/api-docs" class="text-blue-600 hover:text-blue-800">API Docs</a>
             </div>
@@ -169,11 +169,10 @@
                     <span class="text-xs text-teal-600 font-medium">Manage Service →</span>
                 </a>
             </div>
-        </div>
-        <!-- Quick Actions Section -->
+        </div>        <!-- Quick Actions Section -->
         <div class="mb-8">
             <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Actions</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                 <a href="/admin/users" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 text-center transition-colors">
                     <div class="font-semibold">User Management</div>
                     <div class="text-sm opacity-90">Add & manage users</div>
@@ -181,6 +180,10 @@
                 <a href="/admin/services" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 text-center transition-colors">
                     <div class="font-semibold">Services</div>
                     <div class="text-sm opacity-90">Mobile money services</div>
+                </a>
+                <a href="/admin/gateway" class="bg-red-600 text-white px-4 py-3 rounded-lg hover:bg-red-700 text-center transition-colors">
+                    <div class="font-semibold">SMS/USSD Gateway</div>
+                    <div class="text-sm opacity-90">Hardware management</div>
                 </a>
                 <a href="/admin/transactions" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 text-center transition-colors">
                     <div class="font-semibold">Transactions</div>
@@ -191,7 +194,7 @@
                     <div class="text-sm opacity-90">REST & XML endpoints</div>
                 </a>
             </div>
-        </div>>        <!-- Quick Admin Operations -->
+        </div><!-- Quick Admin Operations -->
         <div class="mb-8">
             <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Admin Operations</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
