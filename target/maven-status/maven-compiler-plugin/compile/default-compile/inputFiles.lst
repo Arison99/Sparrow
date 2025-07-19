@@ -2,6 +2,7 @@ E:\arison99\Sparrow\src\main\java\handlers\RestFinancialServicesHandler.java
 E:\arison99\Sparrow\src\main\java\core\MenuSystemImpl.java
 E:\arison99\Sparrow\src\main\java\handlers\RestPaymentsHandler.java
 E:\arison99\Sparrow\src\main\java\handlers\XmlAirtimeHandler.java
+E:\arison99\Sparrow\src\main\java\hardware\TelcoProviderService.java
 E:\arison99\Sparrow\src\main\java\adapters\BackendServiceSavingsLoansAdapter.java
 E:\arison99\Sparrow\src\main\java\handlers\RestAirtimeHandler.java
 E:\arison99\Sparrow\src\main\java\adapters\BackendServiceFinancialServicesAdapter.java
@@ -15,8 +16,10 @@ E:\arison99\Sparrow\src\main\java\adapters\BackendServiceAirtimeAdapter.java
 E:\arison99\Sparrow\src\main\java\core\MenuSystem.java
 E:\arison99\Sparrow\src\main\java\handlers\XmlPaymentsHandler.java
 E:\arison99\Sparrow\src\main\java\handlers\RestSendMoneyHandler.java
+E:\arison99\Sparrow\src\main\java\gateway\GatewayController.java
 E:\arison99\Sparrow\src\main\java\adapters\BackendServiceJsonAdapter.java
 E:\arison99\Sparrow\src\main\java\handlers\XmlPayWithMoMoHandler.java
+E:\arison99\Sparrow\src\main\java\hardware\ModemDetector.java
 E:\arison99\Sparrow\src\main\java\handlers\XmlUserHandler.java
 E:\arison99\Sparrow\src\main\java\adapters\BackendServiceSendMoneyAdapter.java
 E:\arison99\Sparrow\src\main\java\adapters\BackendServicePaymentsAdapter.java
@@ -24,9 +27,12 @@ E:\arison99\Sparrow\src\main\java\adapters\BackendServiceXmlAdapter.java
 E:\arison99\Sparrow\src\main\java\ui\AdminController.java
 E:\arison99\Sparrow\src\main\java\ui\MoMoUSDDApplication.java
 E:\arison99\Sparrow\src\main\java\handlers\RestSavingsLoansHandler.java
+E:\arison99\Sparrow\src\main\java\gateway\SMSGatewayService.java
 E:\arison99\Sparrow\src\main\java\core\Menu.java
 E:\arison99\Sparrow\src\main\java\adapters\BackendServiceInvestInsureAdapter.java
 E:\arison99\Sparrow\src\main\java\adapters\BackendServicePayWithMoMoAdapter.java
 E:\arison99\Sparrow\src\main\java\handlers\XmlSavingsLoansHandler.java
+E:\arison99\Sparrow\src\main\java\hardware\ATCommandInterface.java
 E:\arison99\Sparrow\src\main\java\handlers\RestUserHandler.java
+E:\arison99\Sparrow\src\main\java\gateway\USSDGatewayService.java
 E:\arison99\Sparrow\src\main\java\handlers\XmlInvestInsureHandler.java
