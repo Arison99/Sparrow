@@ -312,4 +312,30 @@ public class AdminController {
         model.addAttribute("users", BackendService.getUsers().values());
         return "invest-insure";
     }
+
+    // Gateway Management Routes
+    @GetMapping("/admin/gateway")
+    public String gatewayDashboard(Model model) {
+        return "gateway-dashboard";
+    }
+
+    @GetMapping("/admin/gateway/modems")
+    public String gatewayModems(Model model) {
+        return "gateway-modems";
+    }
+
+    @GetMapping("/admin/gateway/providers")
+    public String gatewayProviders(Model model) {
+        return "gateway-providers";
+    }
+
+    @GetMapping("/admin/gateway/sms")
+    public String gatewaySMS(Model model) {
+        return "gateway-sms";
+    }
+
+    @GetMapping("/admin/gateway/ussd")
+    public String gatewayUSSD(Model model) {
+        return "gateway-ussd";
+    }
 }
