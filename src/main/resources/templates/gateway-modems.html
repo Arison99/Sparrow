@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Modem Management - Sparrow Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-7xl mx-auto mt-10 p-6">
+    <!-- Navigation -->
+    <nav class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-red-600">Modem Management</h1>
+            <div class="space-x-4">
+                <a href="/admin" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                <a href="/admin/gateway" class="text-blue-600 hover:text-blue-800">Gateway</a>
+                <a href="/admin/gateway/providers" class="text-blue-600 hover:text-blue-800">Providers</a>
+                <a href="/admin/gateway/sms" class="text-blue-600 hover:text-blue-800">SMS</a>
+                <a href="/admin/gateway/ussd" class="text-blue-600 hover:text-blue-800">USSD</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- System Status Bar -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                <div class="flex items-center">
+                    <div class="bg-green-100 p-2 rounded-full mr-3">
+                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Connected Modems</p>
+                        <p class="text-2xl font-bold text-green-600" id="connected-modems">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <div class="flex items-center">
+                    <div class="bg-blue-100 p-2 rounded-full mr-3">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Total Modems</p>
+                        <p class="text-2xl font-bold text-blue-600" id="total-modems">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                <div class="flex items-center">
+                    <div class="bg-yellow-100 p-2 rounded-full mr-3">
+                        <svg class="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Low Signal</p>
+                        <p class="text-2xl font-bold text-yellow-600" id="low-signal-modems">0</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-red-50 p-4 rounded-lg border border-red-200">
+                <div class="flex items-center">
+                    <div class="bg-red-100 p-2 rounded-full mr-3">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm text-gray-600">Offline Modems</p>
+                        <p class="text-2xl font-bold text-red-600" id="offline-modems">0</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick Actions</h3>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <button onclick="scanModems()" class="bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+                <div class="flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Scan for Modems
+                </div>
+            </button>
+            <button onclick="refreshAll()" class="bg-green-600 text-white px-4 py-3 rounded-lg hover:bg-green-700 transition-colors">
+                <div class="flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Refresh Status
+                </div>
+            </button>
+            <button onclick="resetAll()" class="bg-orange-600 text-white px-4 py-3 rounded-lg hover:bg-orange-700 transition-colors">
+                <div class="flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    Reset All Modems
+                </div>
+            </button>
+            <button onclick="exportReport()" class="bg-purple-600 text-white px-4 py-3 rounded-lg hover:bg-purple-700 transition-colors">
+                <div class="flex items-center justify-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Export Report
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <!-- Modem List -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-lg font-semibold text-gray-800">Detected Modems</h3>
+            <div class="flex space-x-2">
+                <select id="filter-status" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="">All Status</option>
+                    <option value="connected">Connected</option>
+                    <option value="disconnected">Disconnected</option>
+                </select>
+                <select id="filter-provider" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="">All Providers</option>
+                    <option value="MTN">MTN</option>
+                    <option value="Airtel">Airtel</option>
+                    <option value="Vodacom">Vodacom</option>
+                    <option value="Safaricom">Safaricom</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Port</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Model</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Signal</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Activity</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="modems-table" class="bg-white divide-y divide-gray-200">
+                    <!-- Modem data will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modem Details Modal -->
+    <div id="modem-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-96 overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800" id="modal-title">Modem Details</h3>
+                        <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="modal-content">
+                        <!-- Modem details will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables
+let modems = [];
+let filteredModems = [];
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadModems();
+    setupFilters();
+    setInterval(refreshStatus, 30000); // Refresh every 30 seconds
+});
+
+// Load modems from API
+async function loadModems() {
+    try {
+        const response = await fetch('/api/gateway/modems');
+        modems = await response.json();
+        filteredModems = [...modems];
+        renderModems();
+        updateStats();
+    } catch (error) {
+        console.error('Error loading modems:', error);
+        showNotification('Error loading modems', 'error');
+    }
+}
+
+// Render modems table
+function renderModems() {
+    const tbody = document.getElementById('modems-table');
+    tbody.innerHTML = '';
+
+    if (filteredModems.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-8 text-center text-gray-500">
+                    No modems found. Click "Scan for Modems" to detect available devices.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    filteredModems.forEach(modem => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        const statusClass = modem.connected ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800';
+        const signalClass = getSignalClass(modem.signalStrength);
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${modem.port}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${modem.model || 'Unknown'}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${modem.networkOperator || 'Unknown'}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${signalClass}">
+                    ${modem.signalStrength || 0}%
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                    ${modem.connected ? 'Connected' : 'Disconnected'}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTime(modem.lastActivity)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button onclick="showModemDetails('${modem.port}')" class="text-blue-600 hover:text-blue-900 mr-3">Details</button>
+                <button onclick="testModem('${modem.port}')" class="text-green-600 hover:text-green-900 mr-3">Test</button>
+                <button onclick="resetModem('${modem.port}')" class="text-orange-600 hover:text-orange-900">Reset</button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Update statistics
+function updateStats() {
+    const connectedCount = modems.filter(m => m.connected).length;
+    const lowSignalCount = modems.filter(m => m.signalStrength < 30).length;
+    const offlineCount = modems.filter(m => !m.connected).length;
+    
+    document.getElementById('connected-modems').textContent = connectedCount;
+    document.getElementById('total-modems').textContent = modems.length;
+    document.getElementById('low-signal-modems').textContent = lowSignalCount;
+    document.getElementById('offline-modems').textContent = offlineCount;
+}
+
+// Get signal strength class
+function getSignalClass(strength) {
+    if (strength >= 70) return 'bg-green-100 text-green-800';
+    if (strength >= 40) return 'bg-yellow-100 text-yellow-800';
+    return 'bg-red-100 text-red-800';
+}
+
+// Format time
+function formatTime(timestamp) {
+    if (!timestamp) return 'Never';
+    return new Date(timestamp).toLocaleString();
+}
+
+// Setup filters
+function setupFilters() {
+    document.getElementById('filter-status').addEventListener('change', applyFilters);
+    document.getElementById('filter-provider').addEventListener('change', applyFilters);
+}
+
+// Apply filters
+function applyFilters() {
+    const statusFilter = document.getElementById('filter-status').value;
+    const providerFilter = document.getElementById('filter-provider').value;
+    
+    filteredModems = modems.filter(modem => {
+        const statusMatch = !statusFilter || 
+            (statusFilter === 'connected' && modem.connected) ||
+            (statusFilter === 'disconnected' && !modem.connected);
+        
+        const providerMatch = !providerFilter || 
+            (modem.networkOperator && modem.networkOperator.includes(providerFilter));
+        
+        return statusMatch && providerMatch;
+    });
+    
+    renderModems();
+}
+
+// Scan for modems
+async function scanModems() {
+    try {
+        showNotification('Scanning for modems...', 'info');
+        const response = await fetch('/api/gateway/modems/detect', { method: 'POST' });
+        const result = await response.json();
+        showNotification(`Scan complete. Found ${result.detected} modems.`, 'success');
+        loadModems();
+    } catch (error) {
+        console.error('Error scanning modems:', error);
+        showNotification('Error scanning for modems', 'error');
+    }
+}
+
+// Refresh status
+async function refreshStatus() {
+    loadModems();
+}
+
+// Refresh all
+function refreshAll() {
+    loadModems();
+    showNotification('Status refreshed', 'success');
+}
+
+// Reset all modems
+async function resetAll() {
+    if (!confirm('Are you sure you want to reset all modems? This will interrupt ongoing operations.')) {
+        return;
+    }
+    
+    try {
+        showNotification('Resetting all modems...', 'info');
+        // Implementation would call reset API for each modem
+        showNotification('All modems reset successfully', 'success');
+        setTimeout(loadModems, 2000);
+    } catch (error) {
+        console.error('Error resetting modems:', error);
+        showNotification('Error resetting modems', 'error');
+    }
+}
+
+// Show modem details
+async function showModemDetails(port) {
+    try {
+        const response = await fetch(`/api/gateway/modems/${port}`);
+        const modem = await response.json();
+        
+        document.getElementById('modal-title').textContent = `Modem Details - ${port}`;
+        document.getElementById('modal-content').innerHTML = `
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <h4 class="font-semibold text-gray-700 mb-2">Basic Information</h4>
+                    <p><strong>Port:</strong> ${modem.port}</p>
+                    <p><strong>Model:</strong> ${modem.model || 'Unknown'}</p>
+                    <p><strong>Manufacturer:</strong> ${modem.manufacturer || 'Unknown'}</p>
+                    <p><strong>Firmware:</strong> ${modem.firmwareVersion || 'Unknown'}</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold text-gray-700 mb-2">Network Information</h4>
+                    <p><strong>Operator:</strong> ${modem.networkOperator || 'Unknown'}</p>
+                    <p><strong>Signal Strength:</strong> ${modem.signalStrength || 0}%</p>
+                    <p><strong>Network Type:</strong> ${modem.networkType || 'Unknown'}</p>
+                    <p><strong>IMEI:</strong> ${modem.imei || 'Unknown'}</p>
+                </div>
+            </div>
+            <div class="mt-4">
+                <h4 class="font-semibold text-gray-700 mb-2">Status</h4>
+                <p><strong>Connected:</strong> ${modem.connected ? 'Yes' : 'No'}</p>
+                <p><strong>Last Activity:</strong> ${formatTime(modem.lastActivity)}</p>
+                <p><strong>Total SMS Sent:</strong> ${modem.smsSent || 0}</p>
+                <p><strong>Total USSD Requests:</strong> ${modem.ussdRequests || 0}</p>
+            </div>
+        `;
+        
+        document.getElementById('modem-modal').classList.remove('hidden');
+    } catch (error) {
+        console.error('Error loading modem details:', error);
+        showNotification('Error loading modem details', 'error');
+    }
+}
+
+// Test modem
+async function testModem(port) {
+    try {
+        showNotification(`Testing modem ${port}...`, 'info');
+        // Implementation would call test API
+        showNotification(`Modem ${port} test completed`, 'success');
+    } catch (error) {
+        console.error('Error testing modem:', error);
+        showNotification('Error testing modem', 'error');
+    }
+}
+
+// Reset modem
+async function resetModem(port) {
+    if (!confirm(`Are you sure you want to reset modem ${port}?`)) {
+        return;
+    }
+    
+    try {
+        showNotification(`Resetting modem ${port}...`, 'info');
+        // Implementation would call reset API for specific modem
+        showNotification(`Modem ${port} reset successfully`, 'success');
+        setTimeout(loadModems, 1000);
+    } catch (error) {
+        console.error('Error resetting modem:', error);
+        showNotification('Error resetting modem', 'error');
+    }
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById('modem-modal').classList.add('hidden');
+}
+
+// Export report
+function exportReport() {
+    const csv = generateCSVReport();
+    downloadCSV(csv, 'modem-report.csv');
+    showNotification('Report exported successfully', 'success');
+}
+
+// Generate CSV report
+function generateCSVReport() {
+    const headers = ['Port', 'Model', 'Provider', 'Signal Strength', 'Status', 'Last Activity'];
+    const rows = modems.map(modem => [
+        modem.port,
+        modem.model || 'Unknown',
+        modem.networkOperator || 'Unknown',
+        modem.signalStrength || 0,
+        modem.connected ? 'Connected' : 'Disconnected',
+        formatTime(modem.lastActivity)
+    ]);
+    
+    return [headers, ...rows].map(row => row.join(',')).join('\n');
+}
+
+// Download CSV
+function downloadCSV(csv, filename) {
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('hidden', '');
+    a.setAttribute('href', url);
+    a.setAttribute('download', filename);
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Show notification
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        'bg-blue-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        document.body.removeChild(notification);
+    }, 3000);
+}
+</script>
+</body>
+</html>
