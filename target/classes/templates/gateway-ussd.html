@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>USSD Gateway Monitor - Sparrow Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-7xl mx-auto mt-10 p-6">
+    <!-- Navigation -->
+    <nav class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-orange-600">USSD Gateway Monitor</h1>
+            <div class="space-x-4">
+                <a href="/admin" class="text-blue-600 hover:text-blue-800">Dashboard</a>
+                <a href="/admin/gateway" class="text-blue-600 hover:text-blue-800">Gateway</a>
+                <a href="/admin/gateway/modems" class="text-blue-600 hover:text-blue-800">Modems</a>
+                <a href="/admin/gateway/providers" class="text-blue-600 hover:text-blue-800">Providers</a>
+                <a href="/admin/gateway/sms" class="text-blue-600 hover:text-blue-800">SMS</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- USSD Statistics -->
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-blue-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Total Requests</p>
+                    <p class="text-2xl font-bold text-blue-600" id="total-requests">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-green-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Successful</p>
+                    <p class="text-2xl font-bold text-green-600" id="successful">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-yellow-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Pending</p>
+                    <p class="text-2xl font-bold text-yellow-600" id="pending">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-red-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Failed</p>
+                    <p class="text-2xl font-bold text-red-600" id="failed">0</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="bg-white rounded-lg shadow p-6">
+            <div class="flex items-center">
+                <div class="bg-purple-100 p-3 rounded-full mr-4">
+                    <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-600">Success Rate</p>
+                    <p class="text-2xl font-bold text-purple-600" id="success-rate">0%</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts and Quick Test -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <!-- USSD Volume Chart -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">USSD Volume (Last 24 Hours)</h3>
+            <canvas id="ussdVolumeChart" width="400" height="200"></canvas>
+        </div>
+        
+        <!-- Quick USSD Test -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4 text-gray-800">Quick USSD Test</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Provider</label>
+                    <select id="quick-provider" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">Select Provider</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">USSD Code</label>
+                    <input type="text" id="quick-ussd" placeholder="*123#" 
+                           class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Modem (Optional)</label>
+                    <select id="quick-modem" class="w-full border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">Auto-select best modem</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="testBalanceCheck()" class="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        Test Balance
+                    </button>
+                    <button onclick="testMobileMoney()" class="bg-green-600 text-white py-2 rounded-lg hover:bg-green-700">
+                        Test Mobile Money
+                    </button>
+                </div>
+                <button onclick="sendCustomUSSD()" class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-700">
+                    Send Custom USSD
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Popular USSD Codes -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800">Popular USSD Codes by Provider</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="ussd-codes-container">
+                <!-- USSD codes will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent USSD Requests -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-800">Recent USSD Requests</h3>
+            <div class="flex space-x-2">
+                <select id="status-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="">All Status</option>
+                    <option value="successful">Successful</option>
+                    <option value="pending">Pending</option>
+                    <option value="failed">Failed</option>
+                </select>
+                <select id="provider-filter" class="border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                    <option value="">All Providers</option>
+                </select>
+                <button onclick="refreshRequests()" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 text-sm">
+                    Refresh
+                </button>
+            </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Request ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">USSD Code</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Response</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Modem</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Time</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="requests-table" class="bg-white divide-y divide-gray-200">
+                    <!-- Requests will be loaded here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Response Details Modal -->
+    <div id="response-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+                <div class="p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-gray-800" id="modal-title">USSD Response Details</h3>
+                        <button onclick="closeResponseModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div id="modal-content" class="space-y-4">
+                        <!-- Response details will be loaded here -->
+                    </div>
+                    <div class="flex justify-end space-x-3 mt-6">
+                        <button onclick="closeResponseModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                            Close
+                        </button>
+                        <button onclick="retryRequest()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Retry Request
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Global variables
+let ussdRequests = [];
+let providers = [];
+let modems = [];
+let ussdChart;
+let currentRequestId = null;
+
+// Initialize page
+document.addEventListener('DOMContentLoaded', function() {
+    loadUSSDStatistics();
+    loadProviders();
+    loadModems();
+    loadRecentRequests();
+    loadUSSDCodes();
+    setupFilters();
+    initializeChart();
+    setInterval(refreshData, 30000); // Refresh every 30 seconds
+});
+
+// Load USSD statistics
+async function loadUSSDStatistics() {
+    try {
+        // Mock data - in real implementation, fetch from API
+        const mockStats = {
+            totalRequests: 1250,
+            successful: 1180,
+            pending: 15,
+            failed: 55,
+            hourlyData: Array.from({length: 24}, () => Math.floor(Math.random() * 50))
+        };
+        
+        document.getElementById('total-requests').textContent = mockStats.totalRequests;
+        document.getElementById('successful').textContent = mockStats.successful;
+        document.getElementById('pending').textContent = mockStats.pending;
+        document.getElementById('failed').textContent = mockStats.failed;
+        
+        const successRate = mockStats.totalRequests > 0 
+            ? ((mockStats.successful / mockStats.totalRequests) * 100).toFixed(1) 
+            : 0;
+        document.getElementById('success-rate').textContent = successRate + '%';
+        
+        updateChart(mockStats.hourlyData);
+    } catch (error) {
+        console.error('Error loading USSD statistics:', error);
+    }
+}
+
+// Load providers
+async function loadProviders() {
+    try {
+        const response = await fetch('/api/gateway/providers');
+        providers = await response.json();
+        
+        const providerSelect = document.getElementById('quick-provider');
+        const filterSelect = document.getElementById('provider-filter');
+        
+        providers.forEach(provider => {
+            const option1 = document.createElement('option');
+            option1.value = provider.name;
+            option1.textContent = `${provider.name} (${provider.country})`;
+            providerSelect.appendChild(option1);
+            
+            const option2 = document.createElement('option');
+            option2.value = provider.name;
+            option2.textContent = provider.name;
+            filterSelect.appendChild(option2);
+        });
+    } catch (error) {
+        console.error('Error loading providers:', error);
+    }
+}
+
+// Load modems
+async function loadModems() {
+    try {
+        const response = await fetch('/api/gateway/modems');
+        modems = await response.json();
+        
+        const modemSelect = document.getElementById('quick-modem');
+        modems.forEach(modem => {
+            if (modem.connected) {
+                const option = document.createElement('option');
+                option.value = modem.port;
+                option.textContent = `${modem.port} (${modem.networkOperator || 'Unknown'})`;
+                modemSelect.appendChild(option);
+            }
+        });
+    } catch (error) {
+        console.error('Error loading modems:', error);
+    }
+}
+
+// Load recent requests
+async function loadRecentRequests() {
+    try {
+        // Mock data - in real implementation, fetch from API
+        const mockRequests = [
+            {
+                id: 'USSD001',
+                ussdCode: '*123#',
+                provider: 'MTN',
+                response: 'Your balance is UGX 50,000',
+                status: 'successful',
+                modem: 'COM3',
+                duration: 2.5,
+                timestamp: Date.now() - 300000
+            },
+            {
+                id: 'USSD002',
+                ussdCode: '*456#',
+                provider: 'Airtel',
+                response: 'Welcome to Airtel Money...',
+                status: 'successful',
+                modem: 'COM4',
+                duration: 3.2,
+                timestamp: Date.now() - 600000
+            },
+            {
+                id: 'USSD003',
+                ussdCode: '*789#',
+                provider: 'Vodacom',
+                response: 'Error: Network busy',
+                status: 'failed',
+                modem: 'COM5',
+                duration: 15.0,
+                timestamp: Date.now() - 900000
+            }
+        ];
+        
+        ussdRequests = mockRequests;
+        renderRequests();
+    } catch (error) {
+        console.error('Error loading recent requests:', error);
+    }
+}
+
+// Load USSD codes
+function loadUSSDCodes() {
+    const ussdCodes = {
+        'MTN': {
+            balance: '*123#',
+            mobileMoney: '*165#',
+            bundles: '*150#',
+            callBack: '*131#'
+        },
+        'Airtel': {
+            balance: '*148#',
+            mobileMoney: '*185#',
+            bundles: '*175#',
+            services: '*147#'
+        },
+        'Vodacom': {
+            balance: '*144#',
+            mobileMoney: '*149#',
+            bundles: '*135#',
+            support: '*111#'
+        }
+    };
+    
+    const container = document.getElementById('ussd-codes-container');
+    container.innerHTML = '';
+    
+    Object.entries(ussdCodes).forEach(([provider, codes]) => {
+        const card = document.createElement('div');
+        card.className = 'bg-gray-50 rounded-lg p-4';
+        card.innerHTML = `
+            <h4 class="font-semibold text-gray-800 mb-3">${provider}</h4>
+            <div class="space-y-2">
+                ${Object.entries(codes).map(([service, code]) => `
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-gray-600">${service}</span>
+                        <button onclick="quickTestCode('${provider}', '${code}')" 
+                                class="text-blue-600 hover:text-blue-900 text-sm font-medium">
+                            ${code}
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+// Setup filters
+function setupFilters() {
+    document.getElementById('status-filter').addEventListener('change', applyFilters);
+    document.getElementById('provider-filter').addEventListener('change', applyFilters);
+}
+
+// Initialize chart
+function initializeChart() {
+    const ctx = document.getElementById('ussdVolumeChart').getContext('2d');
+    ussdChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+            datasets: [{
+                label: 'USSD Requests',
+                data: Array(24).fill(0),
+                borderColor: 'rgb(249, 115, 22)',
+                backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Update chart
+function updateChart(hourlyData) {
+    if (ussdChart && hourlyData.length > 0) {
+        ussdChart.data.datasets[0].data = hourlyData;
+        ussdChart.update();
+    }
+}
+
+// Render requests
+function renderRequests() {
+    const tbody = document.getElementById('requests-table');
+    tbody.innerHTML = '';
+
+    const statusFilter = document.getElementById('status-filter').value;
+    const providerFilter = document.getElementById('provider-filter').value;
+    
+    const filteredRequests = ussdRequests.filter(req => {
+        const statusMatch = !statusFilter || req.status === statusFilter;
+        const providerMatch = !providerFilter || req.provider === providerFilter;
+        return statusMatch && providerMatch;
+    });
+
+    if (filteredRequests.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="px-6 py-8 text-center text-gray-500">
+                    No USSD requests found matching your criteria.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    filteredRequests.forEach(request => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        const statusClass = getStatusClass(request.status);
+        const truncatedResponse = request.response.length > 30 
+            ? request.response.substring(0, 30) + '...'
+            : request.response;
+        
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${request.id}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${request.ussdCode}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">${request.provider}</td>
+            <td class="px-6 py-4 text-sm text-gray-900" title="${request.response}">${truncatedResponse}</td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">
+                    ${request.status}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${request.modem}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${request.duration}s</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatTime(request.timestamp)}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <button onclick="showResponseDetails('${request.id}')" class="text-blue-600 hover:text-blue-900 mr-3">Details</button>
+                <button onclick="retryUSSD('${request.id}')" class="text-green-600 hover:text-green-900">Retry</button>
+            </td>
+        `;
+        
+        tbody.appendChild(row);
+    });
+}
+
+// Get status class
+function getStatusClass(status) {
+    switch (status) {
+        case 'successful':
+            return 'bg-green-100 text-green-800';
+        case 'pending':
+            return 'bg-yellow-100 text-yellow-800';
+        case 'failed':
+            return 'bg-red-100 text-red-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+}
+
+// Format time
+function formatTime(timestamp) {
+    return new Date(timestamp).toLocaleString();
+}
+
+// Apply filters
+function applyFilters() {
+    renderRequests();
+}
+
+// Test balance check
+async function testBalanceCheck() {
+    const provider = document.getElementById('quick-provider').value;
+    if (!provider) {
+        showNotification('Please select a provider', 'error');
+        return;
+    }
+    
+    try {
+        showNotification(`Testing balance check for ${provider}...`, 'info');
+        const response = await fetch(`/api/gateway/ussd/balance/${provider}`, {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showNotification(`Balance check successful: ${result.response}`, 'success');
+            loadRecentRequests();
+        } else {
+            showNotification('Balance check failed', 'error');
+        }
+    } catch (error) {
+        console.error('Error testing balance:', error);
+        showNotification('Error testing balance check', 'error');
+    }
+}
+
+// Test mobile money
+async function testMobileMoney() {
+    const provider = document.getElementById('quick-provider').value;
+    if (!provider) {
+        showNotification('Please select a provider', 'error');
+        return;
+    }
+    
+    try {
+        showNotification(`Testing mobile money for ${provider}...`, 'info');
+        const response = await fetch(`/api/gateway/ussd/mobile-money/${provider}`, {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showNotification(`Mobile money test successful: ${result.response}`, 'success');
+            loadRecentRequests();
+        } else {
+            showNotification('Mobile money test failed', 'error');
+        }
+    } catch (error) {
+        console.error('Error testing mobile money:', error);
+        showNotification('Error testing mobile money', 'error');
+    }
+}
+
+// Send custom USSD
+async function sendCustomUSSD() {
+    const provider = document.getElementById('quick-provider').value;
+    const ussdCode = document.getElementById('quick-ussd').value;
+    const modem = document.getElementById('quick-modem').value;
+    
+    if (!provider || !ussdCode) {
+        showNotification('Please provide provider and USSD code', 'error');
+        return;
+    }
+    
+    try {
+        showNotification(`Sending USSD ${ussdCode} to ${provider}...`, 'info');
+        const response = await fetch('/api/gateway/ussd/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ussdCode: ussdCode,
+                provider: provider,
+                modem: modem || null
+            })
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            showNotification(`USSD sent successfully: ${result.response}`, 'success');
+            document.getElementById('quick-ussd').value = '';
+            loadRecentRequests();
+        } else {
+            showNotification('USSD request failed', 'error');
+        }
+    } catch (error) {
+        console.error('Error sending USSD:', error);
+        showNotification('Error sending USSD', 'error');
+    }
+}
+
+// Quick test code
+async function quickTestCode(provider, code) {
+    document.getElementById('quick-provider').value = provider;
+    document.getElementById('quick-ussd').value = code;
+    await sendCustomUSSD();
+}
+
+// Show response details
+function showResponseDetails(requestId) {
+    const request = ussdRequests.find(r => r.id === requestId);
+    if (!request) return;
+    
+    currentRequestId = requestId;
+    document.getElementById('modal-title').textContent = `USSD Response - ${requestId}`;
+    document.getElementById('modal-content').innerHTML = `
+        <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Request ID</label>
+                    <p class="mt-1 text-sm text-gray-900">${request.id}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">USSD Code</label>
+                    <p class="mt-1 text-sm text-gray-900">${request.ussdCode}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Provider</label>
+                    <p class="mt-1 text-sm text-gray-900">${request.provider}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Status</label>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusClass(request.status)}">
+                        ${request.status}
+                    </span>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Modem</label>
+                    <p class="mt-1 text-sm text-gray-900">${request.modem}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Duration</label>
+                    <p class="mt-1 text-sm text-gray-900">${request.duration} seconds</p>
+                </div>
+                <div class="col-span-2">
+                    <label class="block text-sm font-medium text-gray-700">Timestamp</label>
+                    <p class="mt-1 text-sm text-gray-900">${formatTime(request.timestamp)}</p>
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700">Response</label>
+                <div class="mt-1 p-3 bg-gray-50 rounded-lg">
+                    <pre class="text-sm text-gray-900 whitespace-pre-wrap">${request.response}</pre>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('response-modal').classList.remove('hidden');
+}
+
+// Retry request
+async function retryRequest() {
+    if (!currentRequestId) return;
+    
+    const request = ussdRequests.find(r => r.id === currentRequestId);
+    if (!request) return;
+    
+    try {
+        showNotification(`Retrying USSD request ${currentRequestId}...`, 'info');
+        const response = await fetch('/api/gateway/ussd/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                ussdCode: request.ussdCode,
+                provider: request.provider
+            })
+        });
+        
+        if (response.ok) {
+            showNotification(`USSD request retried successfully`, 'success');
+            closeResponseModal();
+            loadRecentRequests();
+        } else {
+            showNotification('USSD retry failed', 'error');
+        }
+    } catch (error) {
+        console.error('Error retrying USSD:', error);
+        showNotification('Error retrying USSD request', 'error');
+    }
+}
+
+// Retry USSD
+async function retryUSSD(requestId) {
+    currentRequestId = requestId;
+    await retryRequest();
+}
+
+// Close response modal
+function closeResponseModal() {
+    document.getElementById('response-modal').classList.add('hidden');
+    currentRequestId = null;
+}
+
+// Refresh data
+function refreshData() {
+    loadUSSDStatistics();
+    loadRecentRequests();
+}
+
+// Refresh requests
+function refreshRequests() {
+    loadRecentRequests();
+    showNotification('Requests refreshed', 'success');
+}
+
+// Show notification
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' :
+        type === 'error' ? 'bg-red-500 text-white' :
+        'bg-blue-500 text-white'
+    }`;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        document.body.removeChild(notification);
+    }, 3000);
+}
+</script>
+</body>
+</html>
