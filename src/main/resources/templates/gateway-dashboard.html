@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gateway Management | Sparrow Payment Gateway</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+<div class="max-w-7xl mx-auto mt-10 p-6">
+    <!-- Navigation -->
+    <nav class="bg-white rounded-lg shadow p-4 mb-6">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-blue-600">Sparrow Payment Gateway</h1>
+            <div class="space-x-4">
+                <a href="/admin" class="text-blue-600 hover:text-blue-800 font-medium">← Admin Dashboard</a>
+                <a href="/admin/gateway" class="text-blue-600 hover:text-blue-800 font-medium">Gateway</a>
+                <a href="/admin/gateway/modems" class="text-blue-600 hover:text-blue-800">Modems</a>
+                <a href="/admin/gateway/providers" class="text-blue-600 hover:text-blue-800">Providers</a>
+                <a href="/admin/gateway/sms" class="text-blue-600 hover:text-blue-800">SMS Gateway</a>
+                <a href="/admin/gateway/ussd" class="text-blue-600 hover:text-blue-800">USSD Gateway</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- System Status -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">System Status</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="bg-green-50 p-4 rounded-lg border border-green-200">
+                <div class="flex items-center">
+                    <div class="bg-green-500 w-3 h-3 rounded-full mr-3"></div>
+                    <h3 class="text-lg font-semibold text-green-800">System Status</h3>
+                </div>
+                <p class="text-2xl font-bold text-green-600" id="systemStatus">Online</p>
+            </div>
+            
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                <h3 class="text-lg font-semibold text-blue-800">Connected Modems</h3>
+                <p class="text-2xl font-bold text-blue-600" id="connectedModems">0</p>
+            </div>
+            
+            <div class="bg-purple-50 p-4 rounded-lg border border-purple-200">
+                <h3 class="text-lg font-semibold text-purple-800">Supported Providers</h3>
+                <p class="text-2xl font-bold text-purple-600" id="supportedProviders">0</p>
+            </div>
+            
+            <div class="bg-orange-50 p-4 rounded-lg border border-orange-200">
+                <h3 class="text-lg font-semibold text-orange-800">SMS Queue</h3>
+                <p class="text-2xl font-bold text-orange-600" id="smsQueue">0</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Quick Actions</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Detect Modems -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Hardware Detection</h3>
+                <button onclick="detectModems()" class="w-full bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mb-2">
+                    Detect Modems
+                </button>
+                <button onclick="refreshProviders()" class="w-full bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    Refresh Providers
+                </button>
+            </div>
+
+            <!-- Quick SMS -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick SMS</h3>
+                <input type="text" id="quickSmsPhone" placeholder="Phone Number" class="w-full border border-gray-300 p-2 rounded mb-2">
+                <textarea id="quickSmsMessage" placeholder="Message" class="w-full border border-gray-300 p-2 rounded mb-2" rows="2"></textarea>
+                <button onclick="sendQuickSMS()" class="w-full bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                    Send SMS
+                </button>
+            </div>
+
+            <!-- Quick USSD -->
+            <div class="border border-gray-200 rounded-lg p-4">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">Quick USSD</h3>
+                <input type="text" id="quickUssdCode" placeholder="USSD Code (e.g., *123#)" class="w-full border border-gray-300 p-2 rounded mb-2">
+                <select id="quickUssdProvider" class="w-full border border-gray-300 p-2 rounded mb-2">
+                    <option value="">Select Provider</option>
+                </select>
+                <button onclick="sendQuickUSSD()" class="w-full bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                    Send USSD
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- SMS Statistics -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">SMS Statistics</h3>
+            <canvas id="smsChart" width="400" height="200"></canvas>
+        </div>
+
+        <!-- Provider Distribution -->
+        <div class="bg-white rounded-lg shadow p-6">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Provider Distribution</h3>
+            <canvas id="providerChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-xl font-bold mb-4 text-gray-800">Recent Activity</h2>
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Timestamp</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Details</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Provider</th>
+                    </tr>
+                </thead>
+                <tbody id="activityTable" class="bg-white divide-y divide-gray-200">
+                    <!-- Activities will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Message Display -->
+    <div id="messageContainer" class="fixed bottom-4 right-4 z-50"></div>
+</div>
+
+<script>
+let smsChart, providerChart;
+
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    initializeCharts();
+    loadDashboardData();
+    loadProviders();
+    
+    // Auto-refresh every 30 seconds
+    setInterval(loadDashboardData, 30000);
+});
+
+function initializeCharts() {
+    // SMS Statistics Chart
+    const smsCtx = document.getElementById('smsChart').getContext('2d');
+    smsChart = new Chart(smsCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Successful', 'Failed', 'Pending'],
+            datasets: [{
+                data: [0, 0, 0],
+                backgroundColor: ['#10B981', '#EF4444', '#F59E0B']
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+
+    // Provider Distribution Chart
+    const providerCtx = document.getElementById('providerChart').getContext('2d');
+    providerChart = new Chart(providerCtx, {
+        type: 'bar',
+        data: {
+            labels: [],
+            datasets: [{
+                label: 'Connected Modems',
+                data: [],
+                backgroundColor: '#3B82F6'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+async function loadDashboardData() {
+    try {
+        // Load system health
+        const healthResponse = await fetch('/api/gateway/health');
+        const health = await healthResponse.json();
+        
+        document.getElementById('systemStatus').textContent = health.status;
+        document.getElementById('connectedModems').textContent = health.connectedModems || 0;
+        document.getElementById('supportedProviders').textContent = health.supportedProviders || 0;
+        
+        // Load SMS statistics
+        const smsStatsResponse = await fetch('/api/gateway/sms/statistics');
+        const smsStats = await smsStatsResponse.json();
+        
+        document.getElementById('smsQueue').textContent = smsStats.queueSize || 0;
+        
+        // Update SMS chart
+        smsChart.data.datasets[0].data = [
+            smsStats.successfulSMS || 0,
+            smsStats.failedSMS || 0,
+            smsStats.queueSize || 0
+        ];
+        smsChart.update();
+        
+    } catch (error) {
+        console.error('Error loading dashboard data:', error);
+        showMessage('Error loading dashboard data', 'error');
+    }
+}
+
+async function loadProviders() {
+    try {
+        const response = await fetch('/api/gateway/providers');
+        const providers = await response.json();
+        
+        const select = document.getElementById('quickUssdProvider');
+        select.innerHTML = '<option value="">Select Provider</option>';
+        
+        providers.forEach(provider => {
+            const option = document.createElement('option');
+            option.value = provider.name;
+            option.textContent = `${provider.name} (${provider.country})`;
+            select.appendChild(option);
+        });
+        
+    } catch (error) {
+        console.error('Error loading providers:', error);
+    }
+}
+
+async function detectModems() {
+    try {
+        showMessage('Detecting modems...', 'info');
+        const response = await fetch('/api/gateway/modems/detect');
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage(`Detected ${result.count} modems`, 'success');
+            loadDashboardData();
+        } else {
+            showMessage('Failed to detect modems: ' + result.error, 'error');
+        }
+    } catch (error) {
+        console.error('Error detecting modems:', error);
+        showMessage('Error detecting modems', 'error');
+    }
+}
+
+async function refreshProviders() {
+    try {
+        showMessage('Refreshing providers...', 'info');
+        await loadProviders();
+        showMessage('Providers refreshed successfully', 'success');
+    } catch (error) {
+        console.error('Error refreshing providers:', error);
+        showMessage('Error refreshing providers', 'error');
+    }
+}
+
+async function sendQuickSMS() {
+    const phone = document.getElementById('quickSmsPhone').value;
+    const message = document.getElementById('quickSmsMessage').value;
+    
+    if (!phone || !message) {
+        showMessage('Please enter phone number and message', 'error');
+        return;
+    }
+    
+    try {
+        showMessage('Sending SMS...', 'info');
+        const response = await fetch('/api/gateway/sms/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                phoneNumber: phone,
+                message: message
+            })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('SMS sent successfully', 'success');
+            document.getElementById('quickSmsPhone').value = '';
+            document.getElementById('quickSmsMessage').value = '';
+        } else {
+            showMessage('Failed to send SMS: ' + result.error, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error sending SMS:', error);
+        showMessage('Error sending SMS', 'error');
+    }
+}
+
+async function sendQuickUSSD() {
+    const ussdCode = document.getElementById('quickUssdCode').value;
+    const provider = document.getElementById('quickUssdProvider').value;
+    
+    if (!ussdCode) {
+        showMessage('Please enter USSD code', 'error');
+        return;
+    }
+    
+    try {
+        showMessage('Sending USSD...', 'info');
+        const requestBody = { ussdCode: ussdCode };
+        if (provider) {
+            requestBody.provider = provider;
+        }
+        
+        const response = await fetch('/api/gateway/ussd/send', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(requestBody)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showMessage('USSD Response: ' + result.response, 'success');
+            document.getElementById('quickUssdCode').value = '';
+        } else {
+            showMessage('Failed to send USSD: ' + result.error, 'error');
+        }
+        
+    } catch (error) {
+        console.error('Error sending USSD:', error);
+        showMessage('Error sending USSD', 'error');
+    }
+}
+
+function showMessage(message, type) {
+    const container = document.getElementById('messageContainer');
+    const messageDiv = document.createElement('div');
+    
+    const bgColor = type === 'success' ? 'bg-green-500' : type === 'error' ? 'bg-red-500' : 'bg-blue-500';
+    
+    messageDiv.className = `${bgColor} text-white px-4 py-2 rounded shadow-lg mb-2`;
+    messageDiv.textContent = message;
+    
+    container.appendChild(messageDiv);
+    
+    setTimeout(() => {
+        container.removeChild(messageDiv);
+    }, 5000);
+}
+</script>
+</body>
+</html>
