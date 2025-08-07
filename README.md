@@ -415,6 +415,7 @@ For commercial support, enterprise licensing, or custom development:
 - **Email**: harrisondaviinci@gmail.com
 
 ---
+<!-- GitAds-Verify: 21ZB7RILMZIKHZSPLZ3E4DAVHQDVXW3V -->
 
 <div align="center">
 <p><strong>Built with ❤️ by the Sparrow Team</strong></p>
