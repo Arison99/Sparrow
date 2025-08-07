@@ -425,3 +425,8 @@ For commercial support, enterprise licensing, or custom development:
 [📖 Documentation](API_DOCUMENTATION.md) | 
 [🚀 Get Started](#-quick-start) | 
 </div>
+
+## GitAds Sponsored
+[![Sponsored by GitAds](https://gitads.dev/v1/ad-serve?source=arison99/sparrow@github)](https://gitads.dev/v1/ad-track?source=arison99/sparrow@github)
+
+
